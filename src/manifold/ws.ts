@@ -95,7 +95,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
     [T in ManifoldSubscribeTopic]: [data: ManifoldBroadcastData[T]]
   }>()
   private subscribedEvents = new Set<ManifoldSubscribeTopic>()
-  // _syncEvents should be called after the last one finishes and ws is connected
+  // if needsSync, _syncEvents should be called as soon as the last one finishes and ws is connected
   private needsSync = false
   private isSyncing = false
 
