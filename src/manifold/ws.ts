@@ -25,16 +25,16 @@ export interface ManifoldMessageBase {
   txid: number
 }
 
-export interface ManifoldPingMessage extends ManifoldMessageBase {
+export interface ManifoldPingMessage {
   type: 'ping'
 }
 
-export interface ManifoldSubscribeMessage extends ManifoldMessageBase {
+export interface ManifoldSubscribeMessage {
   type: 'subscribe'
   topics: ManifoldSubscribeTopic[]
 }
 
-export interface ManifoldUnsubscribeMessage extends ManifoldMessageBase {
+export interface ManifoldUnsubscribeMessage {
   type: 'unsubscribe'
   topics: ManifoldSubscribeTopic[]
 }
@@ -46,14 +46,14 @@ export type ManifoldOutgoingMessage =
 
 // incoming messages
 
-export interface ManifoldAckMessage extends ManifoldMessageBase {
+export interface ManifoldAckMessage {
   type: 'ack'
   success: boolean
 }
 
 interface ManifoldBroadcastMessageTempl<
   Topic extends ManifoldSubscribeTopic = any,
-> extends ManifoldMessageBase {
+> {
   type: 'broadcast'
   topic: Topic
   data: ManifoldBroadcastData[Topic]
@@ -66,12 +66,13 @@ type ManifoldMessageMap = {
 export type ManifoldBroadcastMessage =
   ManifoldMessageMap[keyof ManifoldMessageMap]
 
-export type ManifoldBroadcastData = Record<`contract/${number}`, ''> &
-  Record<ManifoldSubscribeTopic, unknown>
+export type ManifoldBroadcastData = Record<ManifoldSubscribeTopic, unknown>
 
-export type ManifoldIncomingMessage =
+export type ManifoldIncomingMessage = (
   | ManifoldAckMessage
   | ManifoldBroadcastMessage
+) &
+  ManifoldMessageBase
 
 // websocket stuff
 
@@ -90,6 +91,13 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private reconnectTimeout?: ReturnType<typeof setTimeout>
   private connectTimeout?: ReturnType<typeof setTimeout>
   private txid = 0
+  private topicEmitter = new EventEmitter<{
+    [T in ManifoldSubscribeTopic]: [data: ManifoldBroadcastData[T]]
+  }>()
+  private subscribedEvents = new Set<ManifoldSubscribeTopic>()
+  // _syncEvents should be called after the last one finishes and ws is connected
+  private needsSync = false
+  private isSyncing = false
 
   constructor() {
     super()
@@ -100,7 +108,69 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
     this._send = this._send.bind(this)
     this._ping = this._ping.bind(this)
     this.ws = this._createWS()
+    this.on('broadcast', (message) => {
+      this.topicEmitter.emit(message.topic, message.data)
+    })
     console.log('ManifoldWebSocket initialized')
+  }
+
+  get connected() {
+    return this.ws.readyState === WebSocket.OPEN
+  }
+
+  subscribe<Topic extends ManifoldSubscribeTopic>(
+    topic: Topic,
+    listener: (data: ManifoldBroadcastData[Topic]) => unknown,
+  ) {
+    this.topicEmitter.on(topic, listener as any)
+    this._syncEvents()
+  }
+
+  unsubscribe<Topic extends ManifoldSubscribeTopic>(
+    topic: Topic,
+    listener: (data: ManifoldBroadcastData[Topic]) => unknown,
+  ) {
+    this.topicEmitter.off(topic, listener as any)
+    this._syncEvents()
+  }
+
+  private async _syncEvents() {
+    if (this.isSyncing || !this.connected) {
+      this.needsSync = true
+      return
+    }
+    try {
+      this.isSyncing = true
+      const localEvents = new Set(this.topicEmitter.eventNames())
+      const toRemove = this.subscribedEvents.difference(localEvents)
+      const toAdd = localEvents.difference(this.subscribedEvents)
+      if (toAdd.size) {
+        console.log('Adding subscription to', toAdd)
+        await this._send({
+          type: 'subscribe',
+          topics: Array.from(toAdd),
+        })
+        toAdd.forEach(this.subscribedEvents.add.bind(this.subscribedEvents))
+        console.log('Subscription added')
+      }
+      if (toRemove.size) {
+        console.log('Removing subscription to', toRemove)
+        await this._send({
+          type: 'unsubscribe',
+          topics: Array.from(toRemove),
+        })
+        toRemove.forEach(
+          this.subscribedEvents.delete.bind(this.subscribedEvents),
+        )
+        console.log('Subscriptions removed')
+      }
+      this.needsSync = false
+    } finally {
+      this.isSyncing = false
+      if (this.needsSync) {
+        this._syncEvents()
+      }
+    }
   }
 
   private _createWS() {
@@ -120,7 +190,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
     return ws
   }
 
-  private async _send(message: Omit<ManifoldOutgoingMessage, 'txid'>) {
+  private async _send(message: ManifoldOutgoingMessage) {
     const txid = this.txid++
     const payload = Object.assign({ txid }, message)
 
@@ -184,6 +254,9 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
       clearInterval(this.pingInterval)
     }
     this.pingInterval = setInterval(this._ping, 30000)
+    if (this.needsSync) {
+      this._syncEvents()
+    }
   }
   private _onError(ev: Event) {
     const ws = ev.target as WebSocket
@@ -192,7 +265,6 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
     this._reconnect()
   }
   private _onMessage(ev: Bun.MessageEvent<string>) {
-    console.log('message:', ev.data)
     const payload = JSON.parse(ev.data) as ManifoldIncomingMessage
     if (payload.type === 'ack') {
       this.emit('ack', payload.txid)
@@ -211,6 +283,10 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
         this.ws.close(1000, 'Reconnect requested')
       } catch {}
     }
+    if (this.subscribedEvents.size) {
+      this.needsSync = true
+    }
+    this.subscribedEvents.clear()
     this.reconnectTimeout = setTimeout(() => {
       console.log('Reconnecting...')
       this.reconnectTimeout = undefined

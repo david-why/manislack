@@ -1,5 +1,9 @@
 import { ManifoldWebSocket } from './src/manifold/ws'
 
-new ManifoldWebSocket()
+const conn = new ManifoldWebSocket()
+
+conn.subscribe('global/new-contract', (bet) => {
+  console.log(bet)
+})
 
 await new Promise(() => {})
