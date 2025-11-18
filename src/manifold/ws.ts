@@ -81,12 +81,14 @@ type ManifoldWebSocketEventMap = {
 }
 
 const PING_TIMEOUT = 10000
-const RECONNECT_WAIT = 1000 // TODO: exponential backoff
+const CONNECT_WAIT = 10000
+const RECONNECT_WAIT = 2000 // TODO: exponential backoff
 
 export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   public ws: WebSocket
   private pingInterval?: ReturnType<typeof setInterval>
   private reconnectTimeout?: ReturnType<typeof setTimeout>
+  private connectTimeout?: ReturnType<typeof setTimeout>
   private txid = 0
 
   constructor() {
@@ -107,6 +109,14 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
     ws.addEventListener('open', this._onOpen)
     ws.addEventListener('error', this._onError)
     ws.addEventListener('message', this._onMessage)
+    if (this.connectTimeout) {
+      clearTimeout(this.connectTimeout)
+    }
+    this.connectTimeout = setTimeout(() => {
+      this.connectTimeout = undefined
+      console.log(`WebSocket not open in ${CONNECT_WAIT}ms, reconnecting`)
+      this._reconnect()
+    }, CONNECT_WAIT)
     return ws
   }
 
@@ -127,11 +137,11 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
 
       const timeout = setTimeout(() => {
         console.warn(
-          `Server did not respond to ping in ${PING_TIMEOUT}ms, reconnecting`,
+          `Server did not ack message ${txid} in ${PING_TIMEOUT}ms, reconnecting`,
         )
-        this.ws.close(1000, 'Ping timeout')
+        this.ws.close(1000, 'Message timeout')
         this.off('ack', handler)
-        reject(new Error('Ping timeout'))
+        reject(new Error('Message timeout'))
       }, PING_TIMEOUT)
 
       this.on('ack', handler)
@@ -141,7 +151,12 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private async _ping() {
     console.log('Sending websocket ping at', new Date())
     const start = Date.now()
-    await this._send({ type: 'ping' })
+    try {
+      await this._send({ type: 'ping' })
+    } catch {
+      // it's reconnecting
+      return
+    }
     const end = Date.now()
     console.log(`Received pong in ${end - start}ms`)
   }
@@ -151,7 +166,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private _onClose(ev: CloseEvent) {
     const ws = ev.target as WebSocket
     if (ws != this.ws) return
-    console.log('ws closed', ev.code, ev.reason, ev.wasClean)
+    console.log('WebSocket was closed with code', ev.code, ev.reason)
     ws.removeEventListener('close', this._onClose)
     ws.removeEventListener('open', this._onOpen)
     ws.removeEventListener('error', this._onError)
@@ -161,7 +176,10 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private _onOpen(ev: Event) {
     const ws = ev.target as WebSocket
     if (ws != this.ws) return
-    console.log('ws opened')
+    console.log('WebSocket connected')
+    if (this.connectTimeout) {
+      clearTimeout(this.connectTimeout)
+    }
     if (this.pingInterval) {
       clearInterval(this.pingInterval)
     }
@@ -170,7 +188,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private _onError(ev: Event) {
     const ws = ev.target as WebSocket
     if (ws != this.ws) return
-    console.log('ws error:', ws, ev)
+    console.log('WebSocket error:', ev)
     this._reconnect()
   }
   private _onMessage(ev: Bun.MessageEvent<string>) {
@@ -185,10 +203,16 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
 
   private _reconnect() {
     if (this.reconnectTimeout) return
-    try {
-      this.ws.close(1000, 'Reconnect requested')
-    } catch {}
+    if (this.connectTimeout) {
+      clearTimeout(this.connectTimeout)
+    }
+    if (this.ws.readyState <= WebSocket.OPEN) {
+      try {
+        this.ws.close(1000, 'Reconnect requested')
+      } catch {}
+    }
     this.reconnectTimeout = setTimeout(() => {
+      console.log('Reconnecting...')
       this.reconnectTimeout = undefined
       this.ws = this._createWS()
     }, RECONNECT_WAIT)
