@@ -1,6 +1,7 @@
 import type {
   KnownBlock,
   RichTextBlockElement,
+  RichTextElement,
   RichTextSection,
 } from '@slack/types'
 
@@ -39,8 +40,8 @@ export function generateProgressSection(prob: number): RichTextSection {
 export function generateAnswerBlocks(answer: {
   prob: number
   text: string
-  contractId: string
-  id: string
+  // contractId: string
+  // id: string
 }): KnownBlock[] {
   return [
     {
@@ -79,6 +80,70 @@ export function generateAnswerBlocks(answer: {
   ]
 }
 
-export function generateDescriptionBlocks(content: any) {
-  return []
+export function generateTiptapBlocks(content: any): KnownBlock[] {
+  if (typeof content === 'string') {
+    return [{ type: 'section', text: { type: 'plain_text', text: content } }]
+  }
+  if (!content.content) {
+    return []
+  }
+  const blocks = [
+    {
+      type: 'rich_text',
+      elements: content.content.flatMap(generateTiptapBlockElements),
+    },
+  ] satisfies KnownBlock[]
+  // console.log(JSON.stringify(blocks, null, 2))
+  return blocks
+}
+
+function generateTiptapBlockElements(content: any): RichTextBlockElement[] {
+  if (!content.content) {
+    return []
+  }
+  if (content.type === 'heading') {
+    return [
+      {
+        type: 'rich_text_section',
+        elements: [
+          {
+            type: 'text',
+            text: content.content[0].text,
+            style: { bold: true },
+          },
+        ],
+      },
+    ]
+  } else if (content.type === 'paragraph') {
+    const blocks: RichTextBlockElement[] = [
+      {
+        type: 'rich_text_section',
+        elements: content.content.flatMap(generateTiptapElements),
+      },
+    ]
+    return blocks.filter(({ elements }) => elements.length)
+  }
+  return [
+    {
+      type: 'rich_text_section',
+      elements: [{ type: 'text', text: `[Unknown block "${content.type}"]` }],
+    },
+  ]
+}
+
+function generateTiptapElements(content: any): RichTextElement[] {
+  if (content.type === 'text') {
+    const text = content.text
+    if (!text) {
+      return []
+    }
+    const marks = content.marks ?? []
+    for (const mark of marks) {
+      if (mark.type === 'link') {
+        return [{ type: 'link', text, url: mark.attrs.href }]
+      }
+    }
+    return [{ type: 'text', text }]
+  }
+  return [{ type: 'text', text: ` [Unknown block "${content.type}"] ` }]
 }

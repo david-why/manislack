@@ -76,12 +76,13 @@ namespace Manifold {
     // This url includes the creator's username, but this doesn't need to be correct when constructing valid URLs.
     //   i.e. https://manifold.markets/Austin/test-market is the same as https://manifold.markets/foo/test-market
     url: string
+    slug: string
 
     outcomeType: string // BINARY, FREE_RESPONSE, MULTIPLE_CHOICE, NUMERIC, PSEUDO_NUMERIC, BOUNTIED_QUESTION, POLL, or ...
     mechanism: string // dpm-2, cpmm-1, or cpmm-multi-1
 
     probability: number
-    pool: { outcome: number } // For CPMM markets, the number of shares in the liquidity pool. For DPM markets, the amount of mana invested in each answer.
+    pool: { [outcome: string]: number } // For CPMM markets, the number of shares in the liquidity pool. For DPM markets, the amount of mana invested in each answer.
     p?: number // CPMM markets only, probability constant in y^p * n^(1-p) = k
     totalLiquidity?: number // CPMM markets only, the amount of mana deposited into the liquidity pool
 
