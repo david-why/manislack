@@ -141,6 +141,46 @@ async function handleNewContract({
   }
 }
 
+async function generalHandler(event: string, data: any) {
+  console.log(JSON.stringify(data))
+  if (CHANNEL_LOGS) {
+    slack.client.chat.postMessage({
+      channel: CHANNEL_LOGS,
+      text: 'New market opened',
+      blocks: [
+        {
+          type: 'header',
+          text: { type: 'plain_text', text: `Event received: ${event}` },
+        },
+        {
+          type: 'rich_text',
+          elements: [
+            {
+              type: 'rich_text_preformatted',
+              elements: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(data),
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  }
+}
+
 conn.subscribe('global/new-contract', handleNewContract)
+conn.subscribe('global/new-bet', (e) => generalHandler('global/new-bet', e))
+conn.subscribe('global/new-comment', (e) =>
+  generalHandler('global/new-comment', e),
+)
+conn.subscribe('global/new-subsidy', (e) =>
+  generalHandler('global/new-subsidy', e),
+)
+conn.subscribe('global/updated-contract', (e) =>
+  generalHandler('global/updated-contract', e),
+)
 
 await slack.start()

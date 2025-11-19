@@ -186,7 +186,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   }
 
   private _createWS() {
-    const ws = new WebSocket('wss://api.manifold.markets/ws')
+    const ws = new WebSocket(this.url)
     ws.addEventListener('close', this._onClose)
     ws.addEventListener('open', this._onOpen)
     ws.addEventListener('error', this._onError)
