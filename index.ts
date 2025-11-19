@@ -8,8 +8,13 @@ import { generateAnswerBlocks, generateTiptapBlocks } from './src/blocks'
 
 const DEFAULT_AVATAR = 'https://www.gravatar.com/avatar?d=mp'
 
-const { SLACK_APP_TOKEN, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, CHANNEL_LOGS } =
-  process.env
+const {
+  SLACK_APP_TOKEN,
+  SLACK_BOT_TOKEN,
+  SLACK_SIGNING_SECRET,
+  CHANNEL_LOGS,
+  MANIFOLD_WS_URL,
+} = process.env
 
 const slack = new App({
   signingSecret: SLACK_SIGNING_SECRET,
@@ -18,7 +23,7 @@ const slack = new App({
   socketMode: true,
 })
 
-const conn = new ManifoldWebSocket()
+const conn = new ManifoldWebSocket({ url: MANIFOLD_WS_URL })
 
 async function handleNewContract({
   contract,
@@ -61,7 +66,10 @@ async function handleNewContract({
       ]
     : []
 
-  if (contract.outcomeType === 'MULTIPLE_CHOICE') {
+  if (
+    contract.outcomeType === 'MULTIPLE_CHOICE' ||
+    contract.outcomeType === 'MULTI_NUMERIC'
+  ) {
     await slack.client.chat.postMessage({
       channel: CHANNEL_LOGS!,
       blocks: [
@@ -121,7 +129,7 @@ async function handleNewContract({
           type: 'divider',
         },
         ...generateAnswerBlocks({
-          prob: contract.probability,
+          prob: contract.prob, // prob on new contracts smh
           text: 'Probability',
         }),
         {

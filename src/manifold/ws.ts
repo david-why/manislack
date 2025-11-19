@@ -86,6 +86,10 @@ type ManifoldWebSocketEventMap = {
   broadcast: [message: ManifoldBroadcastMessage]
 }
 
+interface ManifoldWebSocketOptions {
+  url?: string
+}
+
 const PING_TIMEOUT = 10000
 const CONNECT_WAIT = 10000
 const RECONNECT_WAIT = 2000 // TODO: exponential backoff
@@ -104,8 +108,11 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private needsSync = false
   private isSyncing = false
 
-  constructor() {
+  private url: string
+
+  constructor(options: ManifoldWebSocketOptions = {}) {
     super()
+    this.url = options.url ?? 'wss://api.manifold.markets/ws'
     this._onClose = this._onClose.bind(this)
     this._onOpen = this._onOpen.bind(this)
     this._onError = this._onError.bind(this)

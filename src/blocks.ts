@@ -3,6 +3,7 @@ import type {
   RichTextBlockElement,
   RichTextElement,
   RichTextSection,
+  RichTextText,
 } from '@slack/types'
 
 const BLOCKS = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'] as const
@@ -24,7 +25,7 @@ export function generateProgressSection(prob: number): RichTextSection {
     elements: [
       {
         type: 'text',
-        text: progressBar(prob, 24),
+        text: progressBar(prob, 30),
         style: {
           code: true,
         },
@@ -93,7 +94,6 @@ export function generateTiptapBlocks(content: any): KnownBlock[] {
       elements: content.content.flatMap(generateTiptapBlockElements),
     },
   ] satisfies KnownBlock[]
-  // console.log(JSON.stringify(blocks, null, 2))
   return blocks
 }
 
@@ -138,12 +138,31 @@ function generateTiptapElements(content: any): RichTextElement[] {
       return []
     }
     const marks = content.marks ?? []
+    const style: RichTextText['style'] & {} = {}
+    let link: string | undefined = undefined
+    let spoiler = false
     for (const mark of marks) {
+      if (mark.type === 'bold') {
+        style.bold = true
+      }
+      if (mark.type === 'italic') {
+        style.italic = true
+      }
+      if (mark.type === 'spoiler') {
+        spoiler = true
+      }
       if (mark.type === 'link') {
-        return [{ type: 'link', text, url: mark.attrs.href }]
+        link = mark.attrs.href
       }
     }
-    return [{ type: 'text', text }]
+    if (spoiler) {
+      style.code = true
+      return [{ type: 'text', text: '[spoiler]', style }]
+    }
+    if (link) {
+      return [{ type: 'link', text, url: link, style }]
+    }
+    return [{ type: 'text', text, style }]
   }
   return [{ type: 'text', text: ` [Unknown block "${content.type}"] ` }]
 }
