@@ -1,0 +1,33 @@
+{
+  "bets": [
+    {
+      "id": "S02hyhyS5uu8",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "isApi": false,
+      "silent": false,
+      "orderAmount": 500,
+      "amount": 500,
+      "shares": 583.3333333333334,
+      "isFilled": true,
+      "isCancelled": false,
+      "fills": [
+        {
+          "matchedBetId": null,
+          "shares": 583.3333333333334,
+          "amount": 500,
+          "timestamp": 1763554711510,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        }
+      ],
+      "contractId": "Undus5CARh",
+      "outcome": "YES",
+      "probBefore": 0.5,
+      "probAfter": 0.972972972972973,
+      "loanAmount": 0,
+      "createdTime": 1763554711510,
+      "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 },
+      "isRedemption": false,
+      "visibility": "public"
+    }
+  ]
+}

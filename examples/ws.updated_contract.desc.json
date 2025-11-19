@@ -1,0 +1,16 @@
+{
+  "contract": {
+    "description": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [{ "text": "ok again", "type": "text" }]
+        }
+      ]
+    },
+    "lastUpdatedTime": 1763555428375,
+    "coverImageUrl": null,
+    "id": "lN8dZOy2nl"
+  }
+}

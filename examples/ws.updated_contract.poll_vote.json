@@ -1,0 +1,11 @@
+{
+  "contract": {
+    "options": [
+      { "id": "5q22PZqUZu", "text": "a", "index": 0, "votes": 1 },
+      { "id": "C9dg5nQ00I", "text": "b", "index": 1, "votes": 0 },
+      { "id": "6LRycu5Z5l", "text": "See results", "index": 2, "votes": 0 }
+    ],
+    "uniqueBettorCount": 1,
+    "id": "ShtRSpZARO"
+  }
+}

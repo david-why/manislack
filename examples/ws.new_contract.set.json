@@ -1,0 +1,122 @@
+{
+  "contract": {
+    "id": "gzPdscgqlp",
+    "slug": "this-is-a-set-question-mcq-but-sum",
+    "mechanism": "cpmm-multi-1",
+    "outcomeType": "MULTIPLE_CHOICE",
+    "addAnswersMode": "DISABLED",
+    "shouldAnswersSumToOne": false,
+    "answers": [
+      {
+        "id": "Zq5tn9gCc6",
+        "index": 0,
+        "contractId": "gzPdscgqlp",
+        "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "text": "Yes duh",
+        "createdTime": 1763554844000,
+        "poolYes": 33.333333333333336,
+        "poolNo": 33.333333333333336,
+        "prob": 0.5,
+        "totalLiquidity": 33.33333333333334,
+        "subsidyPool": 0,
+        "isOther": false,
+        "probChanges": { "day": 0, "week": 0, "month": 0 },
+        "volume": 0
+      },
+      {
+        "id": "PINUUqy26l",
+        "index": 1,
+        "contractId": "gzPdscgqlp",
+        "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "text": "Nope i don't think so",
+        "createdTime": 1763554844000,
+        "poolYes": 33.333333333333336,
+        "poolNo": 33.333333333333336,
+        "prob": 0.5,
+        "totalLiquidity": 33.33333333333334,
+        "subsidyPool": 0,
+        "isOther": false,
+        "probChanges": { "day": 0, "week": 0, "month": 0 },
+        "volume": 0
+      },
+      {
+        "id": "OsRtUt02nL",
+        "index": 2,
+        "contractId": "gzPdscgqlp",
+        "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "text": "I don't know",
+        "createdTime": 1763554844000,
+        "poolYes": 33.333333333333336,
+        "poolNo": 33.333333333333336,
+        "prob": 0.5,
+        "totalLiquidity": 33.33333333333334,
+        "subsidyPool": 0,
+        "isOther": false,
+        "probChanges": { "day": 0, "week": 0, "month": 0 },
+        "volume": 0
+      }
+    ],
+    "totalLiquidity": 100,
+    "subsidyPool": 0,
+    "creatorId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "creatorName": "ok",
+    "creatorUsername": "ok",
+    "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+    "creatorCreatedTime": 1763483000000,
+    "question": "This is a set question? (MCQ but sum is not 100%)",
+    "description": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "marks": [{ "type": "italic" }],
+              "text": "im gonna stop writing these"
+            }
+          ]
+        }
+      ]
+    },
+    "visibility": "public",
+    "isResolved": false,
+    "createdTime": 1763554844591,
+    "closeTime": 1764159600000,
+    "dailyScore": 0,
+    "popularityScore": 0,
+    "importanceScore": 0.25,
+    "freshnessScore": 0,
+    "conversionScore": 0.13333333333333333,
+    "uniqueBettorCount": 0,
+    "uniqueBettorCountDay": 0,
+    "viewCount": 0,
+    "lastUpdatedTime": 1763554844591,
+    "volume": 0,
+    "volume24Hours": 0,
+    "elasticity": 4.99,
+    "collectedFees": { "creatorFee": 0, "liquidityFee": 0, "platformFee": 0 },
+    "token": "MANA",
+    "boosted": false
+  },
+  "creator": {
+    "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+    "isBannedFromPosting": false,
+    "id": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "lastBetTime": 1763554803573,
+    "creatorTraders": { "daily": 2, "weekly": 2, "allTime": 2, "monthly": 2 },
+    "seenStreakModal": true,
+    "signupBonusPaid": 0,
+    "shouldShowWelcome": false,
+    "streakForgiveness": 1,
+    "currentBettingStreak": 2,
+    "createdTime": 1763483000000,
+    "username": "ok",
+    "name": "ok",
+    "balance": 15813,
+    "cashBalance": 0,
+    "spiceBalance": 0,
+    "totalDeposits": 16439.232757937534,
+    "totalCashDeposits": 0
+  }
+}

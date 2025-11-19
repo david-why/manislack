@@ -1,0 +1,46 @@
+{
+  "creator": {
+    "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+    "isBannedFromPosting": false,
+    "id": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "lastBetTime": 1763557244486,
+    "creatorTraders": { "daily": 2, "weekly": 2, "allTime": 2, "monthly": 2 },
+    "seenStreakModal": true,
+    "signupBonusPaid": 0,
+    "isAdvancedTrader": true,
+    "shouldShowWelcome": false,
+    "streakForgiveness": 1,
+    "currentBettingStreak": 2,
+    "createdTime": 1763483000000,
+    "username": "ok",
+    "name": "ok",
+    "balance": 14537.598306414371,
+    "cashBalance": 0,
+    "spiceBalance": 0,
+    "totalDeposits": 15955.747418277166,
+    "totalCashDeposits": 0
+  },
+  "comment": {
+    "id": "30yz6ai82f2",
+    "content": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [{ "type": "text", "text": "i lied lol" }]
+        }
+      ]
+    },
+    "createdTime": 1763557283028,
+    "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "userName": "ok",
+    "userUsername": "ok",
+    "userAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+    "commentType": "contract",
+    "contractId": "O8zsucUQlg",
+    "contractSlug": "this-mcq-resolves-5050",
+    "contractQuestion": "This MCQ resolves 40-60",
+    "visibility": "public",
+    "isApi": false
+  }
+}

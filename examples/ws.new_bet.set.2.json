@@ -1,0 +1,34 @@
+{
+  "bets": [
+    {
+      "id": "yCc6QPSNEZOt",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "isApi": false,
+      "silent": false,
+      "contractId": "gzPdscgqlp",
+      "outcome": "NO",
+      "orderAmount": 75,
+      "isCancelled": false,
+      "amount": 75,
+      "loanAmount": 0,
+      "shares": 98.07692307692308,
+      "answerId": "PINUUqy26l",
+      "fills": [
+        {
+          "matchedBetId": null,
+          "shares": 98.07692307692308,
+          "amount": 75,
+          "timestamp": 1763554900427,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        }
+      ],
+      "isFilled": true,
+      "probBefore": 0.5,
+      "probAfter": 0.08648648648648642,
+      "createdTime": 1763554900427,
+      "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 },
+      "isRedemption": false,
+      "visibility": "public"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "bets": [
+    {
+      "id": "Qc8lqu2zIL0u",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "isApi": false,
+      "silent": false,
+      "betGroupId": "nPNdUcQSNNqZ",
+      "orderAmount": 500,
+      "amount": 500,
+      "shares": 587.7846811775789,
+      "isFilled": true,
+      "fills": [
+        {
+          "matchedBetId": null,
+          "shares": 266.2330669977157,
+          "amount": 221.3080135334294,
+          "timestamp": 1763554803573,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        },
+        {
+          "matchedBetId": null,
+          "amount": 278.6919864665706,
+          "shares": 321.55161417986324,
+          "timestamp": 1763554803573,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        }
+      ],
+      "contractId": "Pz6Z85z9UQ",
+      "outcome": "YES",
+      "isCancelled": false,
+      "loanAmount": 0,
+      "answerId": "U8ROcO8Us2",
+      "probBefore": 0.3333333333333333,
+      "probAfter": 0.9798118912502349,
+      "createdTime": 1763554803573,
+      "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 },
+      "isRedemption": false,
+      "visibility": "public"
+    },
+    {
+      "id": "s2sR9u8ItgQR",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "isApi": false,
+      "betGroupId": "nPNdUcQSNNqZ",
+      "contractId": "Pz6Z85z9UQ",
+      "outcome": "NO",
+      "orderAmount": 0,
+      "isCancelled": false,
+      "amount": 0,
+      "loanAmount": 0,
+      "shares": 0,
+      "answerId": "qAL22d9dIy",
+      "fills": [
+        {
+          "matchedBetId": null,
+          "shares": 321.55161417986324,
+          "amount": 300.1218003232169,
+          "timestamp": 1763554803573,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        },
+        {
+          "matchedBetId": null,
+          "amount": -300.1218003232169,
+          "shares": -321.55161417986324,
+          "timestamp": 1763554803573,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        }
+      ],
+      "isFilled": true,
+      "probBefore": 0.3333333333333333,
+      "probAfter": 0.010094054374882248,
+      "createdTime": 1763554803573,
+      "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 },
+      "isRedemption": true,
+      "visibility": "public"
+    },
+    {
+      "id": "05Uls6tQLcul",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "isApi": false,
+      "betGroupId": "nPNdUcQSNNqZ",
+      "contractId": "Pz6Z85z9UQ",
+      "outcome": "NO",
+      "orderAmount": 0,
+      "isCancelled": false,
+      "amount": 0,
+      "loanAmount": 0,
+      "shares": 0,
+      "answerId": "8ICIn6yIQZ",
+      "fills": [
+        {
+          "matchedBetId": null,
+          "shares": 321.55161417986324,
+          "amount": 300.1218003232169,
+          "timestamp": 1763554803573,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        },
+        {
+          "matchedBetId": null,
+          "amount": -300.1218003232169,
+          "shares": -321.55161417986324,
+          "timestamp": 1763554803573,
+          "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 }
+        }
+      ],
+      "isFilled": true,
+      "probBefore": 0.3333333333333333,
+      "probAfter": 0.010094054374882248,
+      "createdTime": 1763554803573,
+      "fees": { "creatorFee": 0, "platformFee": 0, "liquidityFee": 0 },
+      "isRedemption": true,
+      "visibility": "public"
+    }
+  ]
+}

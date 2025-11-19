@@ -1,0 +1,58 @@
+{
+  "contract": {
+    "id": "O8zsucUQlg",
+    "isResolved": true,
+    "resolution": "CHOOSE_MULTIPLE",
+    "resolutionTime": 1763557259804,
+    "closeTime": 1763557259804,
+    "resolutions": {
+      "llLZqnhhEc": 39.794659556687506,
+      "dROqIdgS56": 60.2053404433125
+    },
+    "resolverId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "subsidyPool": 0,
+    "lastUpdatedTime": 1763557259804,
+    "answers": [
+      {
+        "id": "llLZqnhhEc",
+        "index": 0,
+        "contractId": "O8zsucUQlg",
+        "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "text": "This will receive 50%",
+        "createdTime": 1763557007000,
+        "color": "#4e46dc",
+        "poolYes": 61.49999999999998,
+        "poolNo": 40.65040650406507,
+        "prob": 0.39794659556687506,
+        "totalLiquidity": 50.00000000000001,
+        "subsidyPool": 0,
+        "isOther": false,
+        "probChanges": { "day": 0, "week": 0, "month": 0 },
+        "volume": 23,
+        "resolutionTime": 1763557259804,
+        "resolverId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "resolutionProbability": 0.39794659556687517
+      },
+      {
+        "id": "dROqIdgS56",
+        "index": 1,
+        "contractId": "O8zsucUQlg",
+        "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "text": "and so will this",
+        "createdTime": 1763557007000,
+        "color": "#e9a23b",
+        "poolYes": 40.65040650406504,
+        "poolNo": 61.50000000000002,
+        "prob": 0.602053404433125,
+        "totalLiquidity": 50.00000000000001,
+        "subsidyPool": 0,
+        "isOther": false,
+        "probChanges": { "day": 0, "week": 0, "month": 0 },
+        "volume": 0,
+        "resolutionTime": 1763557259804,
+        "resolverId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+        "resolutionProbability": 0.6020534044331252
+      }
+    ]
+  }
+}

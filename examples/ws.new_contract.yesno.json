@@ -1,0 +1,69 @@
+{
+  "contract": {
+    "id": "Undus5CARh",
+    "slug": "this-is-a-yesno-question",
+    "mechanism": "cpmm-1",
+    "outcomeType": "BINARY",
+    "totalLiquidity": 100,
+    "subsidyPool": 0,
+    "initialProbability": 0.5,
+    "p": 0.5,
+    "pool": { "YES": 100, "NO": 100 },
+    "prob": 0.5,
+    "probChanges": { "day": 0, "week": 0, "month": 0 },
+    "creatorId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "creatorName": "ok",
+    "creatorUsername": "ok",
+    "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+    "creatorCreatedTime": 1763483000000,
+    "question": "This is a Yes/No question",
+    "description": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [{ "type": "text", "text": "it resolves yes btw" }]
+        }
+      ]
+    },
+    "visibility": "public",
+    "isResolved": false,
+    "createdTime": 1763554695741,
+    "closeTime": 1764159480000,
+    "dailyScore": 0,
+    "popularityScore": 0,
+    "importanceScore": 0.25,
+    "freshnessScore": 0,
+    "conversionScore": 0.13333333333333333,
+    "uniqueBettorCount": 0,
+    "uniqueBettorCountDay": 0,
+    "viewCount": 0,
+    "lastUpdatedTime": 1763554695741,
+    "volume": 0,
+    "volume24Hours": 0,
+    "elasticity": 18.460482067363902,
+    "collectedFees": { "creatorFee": 0, "liquidityFee": 0, "platformFee": 0 },
+    "token": "MANA",
+    "boosted": false
+  },
+  "creator": {
+    "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+    "isBannedFromPosting": false,
+    "id": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+    "lastBetTime": 1763553667491,
+    "creatorTraders": { "daily": 2, "weekly": 2, "allTime": 2, "monthly": 2 },
+    "seenStreakModal": true,
+    "signupBonusPaid": 0,
+    "shouldShowWelcome": false,
+    "streakForgiveness": 1,
+    "currentBettingStreak": 2,
+    "createdTime": 1763483000000,
+    "username": "ok",
+    "name": "ok",
+    "balance": 17013,
+    "cashBalance": 0,
+    "spiceBalance": 0,
+    "totalDeposits": 16639.232757937534,
+    "totalCashDeposits": 0
+  }
+}
