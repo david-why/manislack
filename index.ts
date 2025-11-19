@@ -2,19 +2,9 @@ import { ManifoldWebSocket } from './src/manifold/ws'
 
 import { App } from '@slack/bolt'
 import type { KnownBlock } from '@slack/types'
+import { generateAnswerBlocks, generateDescriptionBlocks, generateProgressSection } from './src/blocks'
 
-const BLOCKS = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'] as const
-
-function progressBar(percentage: number, size: number) {
-  const blocks = percentage * size
-  return (
-    BLOCKS[8].repeat(Math.floor(blocks)) +
-    (Math.floor(blocks) === blocks
-      ? ''
-      : BLOCKS[Math.round(blocks - Math.floor(blocks)) * 8]) +
-    BLOCKS[0].repeat(size - Math.ceil(blocks))
-  )
-}
+const DEFAULT_AVATAR = 'https://www.gravatar.com/avatar?d=mp'
 
 const { SLACK_APP_TOKEN, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, CHANNEL_LOGS } =
   process.env
@@ -67,85 +57,19 @@ conn.subscribe('global/new-contract', async ({ contract, creator }) => {
     : []
 
   if (contract.outcomeType === 'MULTIPLE_CHOICE') {
-    const answerBlocks = contract.answers!.flatMap(
-      (a) =>
-        [
-          {
-            type: 'rich_text',
-            elements: [
-              {
-                type: 'rich_text_section',
-                elements: [
-                  {
-                    type: 'text',
-                    text: a.text,
-                    style: {
-                      bold: true,
-                    },
-                  },
-                ],
-              },
-              {
-                type: 'rich_text_section',
-                elements: [
-                  {
-                    type: 'text',
-                    text: progressBar(a.prob, 24),
-                    style: {
-                      code: true,
-                    },
-                  },
-                  {
-                    type: 'text',
-                    text: ` ${(a.prob * 100).toFixed(1)} %`,
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'context_actions',
-            elements: [
-              {
-                type: 'feedback_buttons',
-                action_id: 'bet',
-                positive_button: {
-                  text: {
-                    type: 'plain_text',
-                    text: 'Bet YES',
-                  },
-                  value: `yes-${contract.id}-${a.id}`,
-                },
-                negative_button: {
-                  text: {
-                    type: 'plain_text',
-                    text: 'Bet NO',
-                  },
-                  value: `no-${contract.id}-${a.id}`,
-                },
-              },
-            ],
-          },
-        ] satisfies KnownBlock[],
-    )
-
     await slack.client.chat.postMessage({
       channel: CHANNEL_LOGS!,
       blocks: [
         {
           type: 'header',
-          text: {
-            type: 'plain_text',
-            text: contract.question,
-          },
+          text: { type: 'plain_text', text: contract.question },
         },
         {
           type: 'context',
           elements: [
             {
               type: 'image',
-              image_url:
-                creator.avatarUrl || 'https://www.gravatar.com/avatar?d=mp',
+              image_url: creator.avatarUrl || DEFAULT_AVATAR,
               alt_text: creator.name,
             },
             {
@@ -158,10 +82,11 @@ conn.subscribe('global/new-contract', async ({ contract, creator }) => {
         {
           type: 'divider',
         },
-        ...answerBlocks,
+        ...contract.answers!.flatMap(generateAnswerBlocks),
         {
           type: 'divider',
         },
+        ...generateDescriptionBlocks(contract.description),
         // {
         //   type: 'rich_text',
         //   elements: [
@@ -233,6 +158,7 @@ conn.subscribe('global/new-contract', async ({ contract, creator }) => {
         // },
       ],
     })
+  } else if (contract.outcomeType === 'BINARY') {
   }
 })
 

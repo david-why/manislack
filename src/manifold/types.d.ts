@@ -247,4 +247,6 @@ namespace Manifold {
     shortText?: string
     midpoint?: number
   }
+
+  type JSONContent = any
 }
