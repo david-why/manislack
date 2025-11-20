@@ -25,6 +25,12 @@ namespace Manifold {
     lastBetTime?: number
   }
 
+  type GroupMixin = {
+    groupSlugs?: string[]
+  }
+
+  // lite contract (returned in GET /v0/markets)
+
   interface LiteContractBase {
     id: string
     slug: string
@@ -47,6 +53,8 @@ namespace Manifold {
     lastUpdatedTime: number
     lastCommentTime?: number
   }
+
+  // TODO: add bountied question
 
   type LitePollContract = LiteContractBase & {
     outcomeType: 'POLL'
@@ -84,4 +92,56 @@ namespace Manifold {
     | LiteDateContract
     | LiteMultiNumericContract
     | LiteBinaryContract
+
+  // half-full contracts (returned in GET /v0/market/:id)
+
+  interface ContractBase extends LiteContractBase {
+    token: 'MANA'
+    description: any // Tiptap JSON format
+    textDescription: string
+  }
+
+  type PollContract = (LitePollContract & ContractBase & GroupMixin) & {
+    options: { text: string; votes: number }[]
+  }
+
+  type MCContract = (LiteMCContract & ContractBase & GroupMixin) & {
+    shouldAnswersSumToOne: boolean // true = mcq, false = set
+    addAnswersMode: 'DISABLED' | 'ONLY_CREATOR' | 'ANYONE'
+    answers: Answer[]
+  }
+
+  // FIXME: manifold api bug? answers not returned for date & numeric
+  type DateContract = LiteDateContract & ContractBase
+
+  type MultiNumericContract = LiteMultiNumericContract &
+    ContractBase &
+    GroupMixin
+
+  type BinaryContract = LiteBinaryContract & ContractBase
+
+  type Contract =
+    | PollContract
+    | MCContract
+    | DateContract
+    | MultiNumericContract
+    | BinaryContract
+
+  // answers
+
+  interface Answer {
+    id: string
+    index: number
+    contractId: string
+    userId: string
+    text: string
+    createdTime: number
+    totalLiquidity: number
+    subsidyPool: number
+    isOther: boolean
+    probChanges: { day: number; week: number; month: number }
+    volume: number
+    pool: { YES: number; NO: number }
+    probability: number
+  }
 }
