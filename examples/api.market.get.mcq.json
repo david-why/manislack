@@ -1,0 +1,94 @@
+{
+  "id": "Pz6Z85z9UQ",
+  "creatorId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+  "creatorUsername": "ok",
+  "creatorName": "ok",
+  "createdTime": 1763554760570,
+  "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+  "closeTime": 1764159480000,
+  "question": "This is a multiple choice question?",
+  "slug": "this-is-a-multiple-choice-question",
+  "url": "https://dev.manifold.markets/ok/this-is-a-multiple-choice-question",
+  "totalLiquidity": 100,
+  "outcomeType": "MULTIPLE_CHOICE",
+  "mechanism": "cpmm-multi-1",
+  "volume": 500,
+  "volume24Hours": 500,
+  "isResolved": false,
+  "uniqueBettorCount": 1,
+  "lastUpdatedTime": 1763554803573,
+  "lastBetTime": 1763554803573,
+  "token": "MANA",
+  "shouldAnswersSumToOne": true,
+  "addAnswersMode": "DISABLED",
+  "answers": [
+    {
+      "id": "U8ROcO8Us2",
+      "index": 0,
+      "contractId": "Pz6Z85z9UQ",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "Yes it is",
+      "createdTime": 1763554760000,
+      "totalLiquidity": 35.35533905932738,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": 0.6464785579169017,
+        "week": 0.6464785579169017,
+        "month": 0
+      },
+      "volume": 500,
+      "pool": { "YES": 5.074946535713707, "NO": 246.3080135334294 },
+      "probability": 0.9798118912502349
+    },
+    {
+      "id": "qAL22d9dIy",
+      "index": 1,
+      "contractId": "Pz6Z85z9UQ",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "No it's not",
+      "createdTime": 1763554760000,
+      "totalLiquidity": 35.35533905932738,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.32323927895845106,
+        "week": -0.32323927895845106,
+        "month": 0
+      },
+      "volume": 0,
+      "pool": { "YES": 350.1218003232169, "NO": 3.5701861433536806 },
+      "probability": 0.01009405437488225
+    },
+    {
+      "id": "8ICIn6yIQZ",
+      "index": 2,
+      "contractId": "Pz6Z85z9UQ",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "I don't know",
+      "createdTime": 1763554760000,
+      "totalLiquidity": 35.35533905932738,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.32323927895845106,
+        "week": -0.32323927895845106,
+        "month": 0
+      },
+      "volume": 0,
+      "pool": { "YES": 350.1218003232169, "NO": 3.5701861433536806 },
+      "probability": 0.01009405437488225
+    }
+  ],
+  "description": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [{ "text": "the answer is obvious", "type": "text" }]
+      }
+    ]
+  },
+  "groupSlugs": ["zxczxczxczxczxczxczxc"],
+  "textDescription": "the answer is obvious"
+}
