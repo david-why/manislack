@@ -7,18 +7,23 @@
 namespace Manifold {
   // mixins
 
-  type BaseResolvableMixin<HasProbability extends boolean = false> =
+  type BaseResolvableMixin<
+    HasProbability extends boolean = false,
+    ResolutionRequired extends boolean = false,
+  > =
     | ({
-        resolution: string
+        // this is hard to type so i left it as optional, it exists on
+        // resolved contracts AND answers on `!shouldAnswersSumToOne` markets
+        resolution?: string
         resolutionTime: number
         resolverId: string
-      } & (HasProbability extends true
-        ? { resolutionProbability?: number }
-        : {}))
+      } & (ResolutionRequired extends true ? { resolution: string } : {}) &
+        (HasProbability extends true ? { resolutionProbability: number } : {}))
     | {
         resolution?: never
         resolutionTime?: never
         resolverId?: never
+        resolutionProbability?: never
       }
 
   type LiteContractResolvableMixin<HasProbability extends boolean = false> =
@@ -37,7 +42,7 @@ namespace Manifold {
     lastBetTime?: number
   }
 
-  interface MultiBasedMixin {
+  type MultiBasedMixin<WithAnswers extends boolean = false> = {
     shouldAnswersSumToOne: boolean // true = mcq, false = set
     addAnswersMode: 'DISABLED' | 'ONLY_CREATOR' | 'ANYONE'
   }
@@ -170,13 +175,14 @@ namespace Manifold {
     }
 
     type PollContract = Manifold.PollContract
-    type MCContract = (Manifold.MCContract & AnswersMixin<Answer>) & {
+    type MCContract = Manifold.MCContract & AnswersMixin<Answer>
+    type DateContract = Manifold.DateContract &
+      AnswersMixin<Answer & MidpointMixin>
+    type MultiNumericContract = Manifold.MultiNumericContract &
+      AnswersMixin<Answer & MidpointMixin>
+    type BinaryContract = Manifold.BinaryContract & {
       probability: number
     }
-    type DateContract = Manifold.DateContract & AnswersMixin<Answer>
-    type MultiNumericContract = Manifold.MultiNumericContract &
-      AnswersMixin<Answer>
-    type BinaryContract = Manifold.BinaryContract
 
     type Contract = (
       | PollContract
