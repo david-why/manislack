@@ -7,11 +7,19 @@
 namespace Manifold {
   // mixins
 
-  type BaseResolvableMixin<HasProbability extends boolean = false> = {
-    resolution?: string
-    resolutionTime?: number
-    resolverId?: string
-  } & (HasProbability extends true ? { resolutionProbability?: number } : {})
+  type BaseResolvableMixin<HasProbability extends boolean = false> =
+    | ({
+        resolution: string
+        resolutionTime: number
+        resolverId: string
+      } & (HasProbability extends true
+        ? { resolutionProbability?: number }
+        : {}))
+    | {
+        resolution?: never
+        resolutionTime?: never
+        resolverId?: never
+      }
 
   type LiteContractResolvableMixin<HasProbability extends boolean = false> =
     LiteContractBettableMixin &
@@ -29,10 +37,17 @@ namespace Manifold {
     lastBetTime?: number
   }
 
-  interface MultiBasedMixin<T extends Answer> {
+  interface MultiBasedMixin {
     shouldAnswersSumToOne: boolean // true = mcq, false = set
     addAnswersMode: 'DISABLED' | 'ONLY_CREATOR' | 'ANYONE'
+  }
+
+  interface AnswersMixin<T extends Answer> {
     answers: T[]
+  }
+
+  interface MidpointMixin {
+    midpoint: number
   }
 
   // lite contract (returned in GET /v0/markets)
@@ -40,7 +55,8 @@ namespace Manifold {
   interface LiteContractBase {
     id: string
     slug: string
-    url: string
+    // apparently this is not returned in ws responses
+    // url: string
 
     question: string
 
@@ -89,7 +105,8 @@ namespace Manifold {
     mechanism: 'cpmm-1'
 
     pool: { NO: number; YES: number }
-    probability: number
+    // not in ws
+    // probability: number
     p: number
   }
 
@@ -101,11 +118,11 @@ namespace Manifold {
     | LiteBinaryContract
 
   // full contracts (returned in GET /v0/market/:id)
+  // except the properties only in api or ws responses
 
   interface ContractBase extends LiteContractBase {
     token: 'MANA'
     description: any // Tiptap JSON format
-    textDescription: string
     groupSlugs?: string[]
   }
 
@@ -113,15 +130,13 @@ namespace Manifold {
     options: { text: string; votes: number }[]
   }
 
-  type MCContract = LiteMCContract & ContractBase & MultiBasedMixin<Answer>
+  type MCContract = LiteMCContract & ContractBase & MultiBasedMixin
 
-  type DateContract = LiteDateContract &
-    ContractBase &
-    MultiBasedMixin<MidpointAnswer>
+  type DateContract = LiteDateContract & ContractBase & MultiBasedMixin
 
   type MultiNumericContract = LiteMultiNumericContract &
     ContractBase &
-    MultiBasedMixin<MidpointAnswer>
+    MultiBasedMixin
 
   type BinaryContract = LiteBinaryContract & ContractBase
 
@@ -146,11 +161,92 @@ namespace Manifold {
     isOther: boolean
     probChanges: { day: number; week: number; month: number }
     volume: number
-    pool: { YES: number; NO: number }
-    probability: number
   }
 
-  type MidpointAnswer = Answer & {
-    midpoint: number
+  // api types
+  namespace API {
+    type LiteContract = Manifold.LiteContract & {
+      url: string
+    }
+
+    type PollContract = Manifold.PollContract
+    type MCContract = (Manifold.MCContract & AnswersMixin<Answer>) & {
+      probability: number
+    }
+    type DateContract = Manifold.DateContract & AnswersMixin<Answer>
+    type MultiNumericContract = Manifold.MultiNumericContract &
+      AnswersMixin<Answer>
+    type BinaryContract = Manifold.BinaryContract
+
+    type Contract = (
+      | PollContract
+      | MCContract
+      | DateContract
+      | MultiNumericContract
+      | BinaryContract
+    ) & {
+      url: string
+      textDescription: string
+    }
+
+    type Answer = Manifold.Answer & {
+      pool: { YES: number; NO: number }
+      probability: number
+    }
+  }
+
+  // ws types
+  namespace WS {
+    type PollContract = Manifold.PollContract & {
+      options: { id: string }[]
+      voterVisibility: 'creator' | 'everyone'
+    }
+    type MCContract = Manifold.MCContract & AnswersMixin<Answer>
+    type DateContract = Manifold.DateContract &
+      AnswersMixin<Answer & MidpointMixin>
+    type MultiNumericContract = Manifold.MultiNumericContract &
+      AnswersMixin<Answer & MidpointMixin>
+    type BinaryContract = Manifold.BinaryContract & {
+      initialProbability: number
+      prob: number
+      probChanges: { day: number; week: number; month: number }
+    }
+
+    type Answer = Manifold.Answer & {
+      poolYes: number
+      poolNo: number
+      prob: number
+    }
+
+    type Contract = (
+      | PollContract
+      | ((MCContract | DateContract | MultiNumericContract | BinaryContract) & {
+          subsidyPool: number
+        })
+    ) & {
+      unit?: string // idk what this is
+      timezone?: string
+      creatorCreatedTime: number
+      visibility: 'public' | 'unlisted'
+      dailyScore: number
+      popularityScore: number
+      importanceScore: number
+      freshnessScore: number
+      conversionScore: number
+      uniqueBettorCountDay: number
+      viewCount: number
+      elasticity: number
+      collectedFees: {
+        creatorFee: number
+        liquidityFee: number
+        platformFee: number
+      }
+      boosted: boolean
+    }
+
+    interface NewContract {
+      contract: Contract
+      creator: any
+    }
   }
 }

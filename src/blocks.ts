@@ -102,16 +102,17 @@ function generateTiptapBlockElements(content: any): RichTextBlockElement[] {
     return []
   }
   if (content.type === 'heading') {
+    const elements = generateTiptapElements(content.content)
+    if (!elements.length) {
+      return []
+    }
     return [
       {
         type: 'rich_text_section',
-        elements: [
-          {
-            type: 'text',
-            text: content.content[0].text,
-            style: { bold: true },
-          },
-        ],
+        elements: elements.map((e) => ({
+          ...e,
+          style: Object.assign(e.style ?? {}, { bold: true }),
+        })),
       },
     ]
   } else if (content.type === 'paragraph') {
@@ -165,4 +166,74 @@ function generateTiptapElements(content: any): RichTextElement[] {
     return [{ type: 'text', text, style }]
   }
   return [{ type: 'text', text: ` [Unknown block "${content.type}"] ` }]
+}
+
+function generatePollOptionsBlocks(
+  options: { text: string; votes: number }[],
+): KnownBlock[] {
+  const sumVotes = options.reduce((s, v) => s + v.votes, 0)
+  console.log(options, sumVotes)
+  return options.flatMap((o) =>
+    generateAnswerBlocks({
+      text: o.text,
+      prob: sumVotes ? o.votes / sumVotes : 0,
+    }),
+  )
+}
+
+export function generateContractBlocks(
+  contract: Manifold.WS.Contract,
+): KnownBlock[] {
+  const closeElements = contract.closeTime
+    ? [
+        {
+          type: 'mrkdwn' as const,
+          text: `:clock4: Closes <!date^${Math.round(contract.closeTime / 1000)}^{date_short_pretty}|text>`,
+        },
+      ]
+    : []
+
+  const answerBlocks =
+    contract.outcomeType === 'MULTIPLE_CHOICE' ||
+    contract.outcomeType === 'MULTI_NUMERIC' ||
+    contract.outcomeType === 'DATE'
+      ? contract
+          .answers!.flatMap(generateAnswerBlocks)
+          .concat([{ type: 'divider' }])
+      : contract.outcomeType === 'BINARY'
+        ? generateAnswerBlocks({
+            prob: contract.prob,
+            text: 'Probability',
+          }).concat([{ type: 'divider' }])
+        : contract.outcomeType === 'POLL'
+          ? generatePollOptionsBlocks(contract.options!)
+          : []
+
+  return [
+    {
+      type: 'header',
+      text: { type: 'plain_text', text: contract.question },
+    },
+    {
+      type: 'context',
+      elements: [
+        {
+          type: 'image',
+          image_url:
+            contract.creatorAvatarUrl || 'https://www.gravatar.com/avatar?d=mp',
+          alt_text: contract.creatorName,
+        },
+        {
+          type: 'plain_text',
+          text: contract.creatorName,
+        },
+        ...closeElements,
+      ],
+    },
+    {
+      type: 'divider',
+    },
+    ...answerBlocks,
+    ...generateTiptapBlocks(contract.description),
+  ]
 }

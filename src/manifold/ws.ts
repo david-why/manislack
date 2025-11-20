@@ -67,10 +67,7 @@ export type ManifoldBroadcastMessage =
   ManifoldMessageMap[keyof ManifoldMessageMap]
 
 export type ManifoldBroadcastData = Record<ManifoldSubscribeTopic, unknown> & {
-  'global/new-contract': {
-    contract: Manifold.FullMarket
-    creator: Manifold.User
-  }
+  'global/new-contract': Manifold.WS.NewContract
 }
 
 export type ManifoldIncomingMessage = (
