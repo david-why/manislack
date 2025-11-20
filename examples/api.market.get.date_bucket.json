@@ -19,6 +19,70 @@
   "lastUpdatedTime": 1763555231692,
   "lastBetTime": 1763555231692,
   "token": "MANA",
+  "shouldAnswersSumToOne": true,
+  "addAnswersMode": "DISABLED",
+  "answers": [
+    {
+      "id": "yplOCC2td8",
+      "index": 0,
+      "contractId": "lICEuZU5L5",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "December 2025",
+      "createdTime": 1763555218000,
+      "totalLiquidity": 35.35533905932738,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.24420936751534666,
+        "week": -0.24420936751534666,
+        "month": 0.08912396581798666
+      },
+      "midpoint": 1765843200000,
+      "volume": 0,
+      "pool": { "YES": 113.02835126099309, "NO": 11.059172199315128 },
+      "probability": 0.08912396581798666
+    },
+    {
+      "id": "NU2R5c86nZ",
+      "index": 1,
+      "contractId": "lICEuZU5L5",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "January 2026",
+      "createdTime": 1763555218000,
+      "totalLiquidity": 35.35533905932738,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": 0.4884187350306943,
+        "week": 0.4884187350306943,
+        "month": 0.8217520683640276
+      },
+      "midpoint": 1768521600000,
+      "volume": 100,
+      "pool": { "YES": 16.466331451410653, "NO": 75.91247653969178 },
+      "probability": 0.8217520683640276
+    },
+    {
+      "id": "A0zQc000gu",
+      "index": 2,
+      "contractId": "lICEuZU5L5",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "February 2026",
+      "createdTime": 1763555218000,
+      "totalLiquidity": 35.35533905932738,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.24420936751534666,
+        "week": -0.24420936751534666,
+        "month": 0.08912396581798666
+      },
+      "midpoint": 1771027200000,
+      "volume": 0,
+      "pool": { "YES": 113.02835126099309, "NO": 11.059172199315128 },
+      "probability": 0.08912396581798666
+    }
+  ],
   "description": { "type": "doc", "content": [{ "type": "paragraph" }] },
   "textDescription": ""
 }

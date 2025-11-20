@@ -19,6 +19,86 @@
   "lastUpdatedTime": 1763555138334,
   "lastBetTime": 1763555138334,
   "token": "MANA",
+  "shouldAnswersSumToOne": false,
+  "addAnswersMode": "DISABLED",
+  "answers": [
+    {
+      "id": "udtSC5dApq",
+      "index": 0,
+      "contractId": "ZItUOcZqlP",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "Above 0",
+      "createdTime": 1763555108000,
+      "totalLiquidity": 25,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": { "day": 0.4, "week": 0.4, "month": 0.9 },
+      "midpoint": 10,
+      "volume": 50,
+      "pool": { "YES": 8.333333333333329, "NO": 75 },
+      "probability": 0.9
+    },
+    {
+      "id": "ydU6sN609l",
+      "index": 1,
+      "contractId": "ZItUOcZqlP",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "Above 20",
+      "createdTime": 1763555108000,
+      "totalLiquidity": 25,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.46153846153846156,
+        "week": -0.46153846153846156,
+        "month": 0.038461538461538464
+      },
+      "midpoint": 30,
+      "volume": 100,
+      "pool": { "YES": 125, "NO": 5 },
+      "probability": 0.038461538461538464
+    },
+    {
+      "id": "pgpudtL6yz",
+      "index": 2,
+      "contractId": "ZItUOcZqlP",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "Above 40",
+      "createdTime": 1763555108000,
+      "totalLiquidity": 25,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.4411764705882353,
+        "week": -0.4411764705882353,
+        "month": 0.058823529411764705
+      },
+      "midpoint": 50,
+      "volume": 75,
+      "pool": { "YES": 100, "NO": 6.25 },
+      "probability": 0.058823529411764705
+    },
+    {
+      "id": "gOchtzyON9",
+      "index": 3,
+      "contractId": "ZItUOcZqlP",
+      "userId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+      "text": "Above 60",
+      "createdTime": 1763555108000,
+      "totalLiquidity": 25,
+      "subsidyPool": 0,
+      "isOther": false,
+      "probChanges": {
+        "day": -0.4799999999999999,
+        "week": -0.4799999999999999,
+        "month": 0.020000000000000066
+      },
+      "midpoint": 70,
+      "volume": 150,
+      "pool": { "YES": 175, "NO": 3.5714285714285836 },
+      "probability": 0.020000000000000066
+    }
+  ],
   "description": { "type": "doc", "content": [{ "type": "paragraph" }] },
   "textDescription": ""
 }
