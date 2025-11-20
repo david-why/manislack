@@ -7,26 +7,32 @@
 namespace Manifold {
   // mixins
 
-  type LiteContractResolvableMixin = LiteContractBettableMixin &
-    (
-      | {
-          isResolved: false
-        }
-      | {
-          isResolved: true
-          resolution: string
-          resolutionTime: number
-          resolverId: string
-        }
-    )
+  type BaseResolvableMixin<HasProbability extends boolean = false> = {
+    resolution?: string
+    resolutionTime?: number
+    resolverId?: string
+  } & (HasProbability extends true ? { resolutionProbability?: number } : {})
+
+  type LiteContractResolvableMixin<HasProbability extends boolean = false> =
+    LiteContractBettableMixin &
+      (
+        | {
+            isResolved: false
+          }
+        | ({
+            isResolved: true
+          } & Required<BaseResolvableMixin<HasProbability>>)
+      )
 
   type LiteContractBettableMixin = {
     totalLiquidity: number
     lastBetTime?: number
   }
 
-  type GroupMixin = {
-    groupSlugs?: string[]
+  interface MultiBasedMixin<T extends Answer> {
+    shouldAnswersSumToOne: boolean // true = mcq, false = set
+    addAnswersMode: 'DISABLED' | 'ONLY_CREATOR' | 'ANYONE'
+    answers: T[]
   }
 
   // lite contract (returned in GET /v0/markets)
@@ -77,7 +83,8 @@ namespace Manifold {
     mechanism: 'cpmm-multi-1'
   }
 
-  type LiteBinaryContract = (LiteContractBase & LiteContractResolvableMixin) & {
+  type LiteBinaryContract = (LiteContractBase &
+    LiteContractResolvableMixin<true>) & {
     outcomeType: 'BINARY'
     mechanism: 'cpmm-1'
 
@@ -93,30 +100,28 @@ namespace Manifold {
     | LiteMultiNumericContract
     | LiteBinaryContract
 
-  // half-full contracts (returned in GET /v0/market/:id)
+  // full contracts (returned in GET /v0/market/:id)
 
   interface ContractBase extends LiteContractBase {
     token: 'MANA'
     description: any // Tiptap JSON format
     textDescription: string
+    groupSlugs?: string[]
   }
 
-  type PollContract = (LitePollContract & ContractBase & GroupMixin) & {
+  type PollContract = (LitePollContract & ContractBase) & {
     options: { text: string; votes: number }[]
   }
 
-  type MCContract = (LiteMCContract & ContractBase & GroupMixin) & {
-    shouldAnswersSumToOne: boolean // true = mcq, false = set
-    addAnswersMode: 'DISABLED' | 'ONLY_CREATOR' | 'ANYONE'
-    answers: Answer[]
-  }
+  type MCContract = LiteMCContract & ContractBase & MultiBasedMixin<Answer>
 
-  // FIXME: manifold api bug? answers not returned for date & numeric
-  type DateContract = LiteDateContract & ContractBase
+  type DateContract = LiteDateContract &
+    ContractBase &
+    MultiBasedMixin<MidpointAnswer>
 
   type MultiNumericContract = LiteMultiNumericContract &
     ContractBase &
-    GroupMixin
+    MultiBasedMixin<MidpointAnswer>
 
   type BinaryContract = LiteBinaryContract & ContractBase
 
@@ -129,7 +134,7 @@ namespace Manifold {
 
   // answers
 
-  interface Answer {
+  type Answer = BaseResolvableMixin<true> & {
     id: string
     index: number
     contractId: string
@@ -143,5 +148,9 @@ namespace Manifold {
     volume: number
     pool: { YES: number; NO: number }
     probability: number
+  }
+
+  type MidpointAnswer = Answer & {
+    midpoint: number
   }
 }
