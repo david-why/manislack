@@ -1,1 +1,24 @@
-{"id":"lICEuZU5L5","creatorId":"luo9ldO8dJXsFyWITBNvSPyjEqm1","creatorUsername":"ok","creatorName":"ok","createdTime":1763555218426,"creatorAvatarUrl":"https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c","closeTime":1767225540000,"question":"Bucket date - when the start of 2026?","slug":"bucket-date-when-the-start-of-2026","url":"https://dev.manifold.markets/ok/bucket-date-when-the-start-of-2026","totalLiquidity":100,"outcomeType":"DATE","mechanism":"cpmm-multi-1","volume":100,"volume24Hours":100,"isResolved":false,"uniqueBettorCount":1,"lastUpdatedTime":1763555231692,"lastBetTime":1763555231692,"token":"MANA","description":{"type":"doc","content":[{"type":"paragraph"}]},"textDescription":""}
+{
+  "id": "lICEuZU5L5",
+  "creatorId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+  "creatorUsername": "ok",
+  "creatorName": "ok",
+  "createdTime": 1763555218426,
+  "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+  "closeTime": 1767225540000,
+  "question": "Bucket date - when the start of 2026?",
+  "slug": "bucket-date-when-the-start-of-2026",
+  "url": "https://dev.manifold.markets/ok/bucket-date-when-the-start-of-2026",
+  "totalLiquidity": 100,
+  "outcomeType": "DATE",
+  "mechanism": "cpmm-multi-1",
+  "volume": 100,
+  "volume24Hours": 100,
+  "isResolved": false,
+  "uniqueBettorCount": 1,
+  "lastUpdatedTime": 1763555231692,
+  "lastBetTime": 1763555231692,
+  "token": "MANA",
+  "description": { "type": "doc", "content": [{ "type": "paragraph" }] },
+  "textDescription": ""
+}

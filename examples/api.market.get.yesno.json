@@ -1,1 +1,35 @@
-{"id":"Undus5CARh","creatorId":"luo9ldO8dJXsFyWITBNvSPyjEqm1","creatorUsername":"ok","creatorName":"ok","createdTime":1763554695741,"creatorAvatarUrl":"https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c","closeTime":1764159480000,"question":"This is a Yes/No question","slug":"this-is-a-yesno-question","url":"https://dev.manifold.markets/ok/this-is-a-yesno-question","pool":{"NO":600,"YES":16.66666666666663},"probability":0.972972972972973,"p":0.4999999999999999,"totalLiquidity":100,"outcomeType":"BINARY","mechanism":"cpmm-1","volume":500,"volume24Hours":500,"isResolved":false,"uniqueBettorCount":1,"lastUpdatedTime":1763554711510,"lastBetTime":1763554711510,"token":"MANA","description":{"type":"doc","content":[{"type":"paragraph","content":[{"text":"it resolves yes btw","type":"text"}]}]},"textDescription":"it resolves yes btw"}
+{
+  "id": "Undus5CARh",
+  "creatorId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+  "creatorUsername": "ok",
+  "creatorName": "ok",
+  "createdTime": 1763554695741,
+  "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+  "closeTime": 1764159480000,
+  "question": "This is a Yes/No question",
+  "slug": "this-is-a-yesno-question",
+  "url": "https://dev.manifold.markets/ok/this-is-a-yesno-question",
+  "pool": { "NO": 600, "YES": 16.66666666666663 },
+  "probability": 0.972972972972973,
+  "p": 0.4999999999999999,
+  "totalLiquidity": 100,
+  "outcomeType": "BINARY",
+  "mechanism": "cpmm-1",
+  "volume": 500,
+  "volume24Hours": 500,
+  "isResolved": false,
+  "uniqueBettorCount": 1,
+  "lastUpdatedTime": 1763554711510,
+  "lastBetTime": 1763554711510,
+  "token": "MANA",
+  "description": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [{ "text": "it resolves yes btw", "type": "text" }]
+      }
+    ]
+  },
+  "textDescription": "it resolves yes btw"
+}

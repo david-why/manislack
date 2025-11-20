@@ -1,1 +1,27 @@
-{"id":"ShtRSpZARO","creatorId":"luo9ldO8dJXsFyWITBNvSPyjEqm1","creatorUsername":"ok","creatorName":"ok","createdTime":1763557922382,"creatorAvatarUrl":"https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c","question":"This is a poll","slug":"this-is-a-poll","url":"https://dev.manifold.markets/ok/this-is-a-poll","outcomeType":"POLL","mechanism":"none","volume":0,"volume24Hours":0,"isResolved":false,"uniqueBettorCount":1,"lastUpdatedTime":1763557923846,"token":"MANA","options":[{"text":"a","votes":1},{"text":"b","votes":0},{"text":"See results","votes":0}],"description":{"type":"doc","content":[{"type":"paragraph"}]},"groupSlugs":["nonpredictive"],"textDescription":""}
+{
+  "id": "ShtRSpZARO",
+  "creatorId": "luo9ldO8dJXsFyWITBNvSPyjEqm1",
+  "creatorUsername": "ok",
+  "creatorName": "ok",
+  "createdTime": 1763557922382,
+  "creatorAvatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c",
+  "question": "This is a poll",
+  "slug": "this-is-a-poll",
+  "url": "https://dev.manifold.markets/ok/this-is-a-poll",
+  "outcomeType": "POLL",
+  "mechanism": "none",
+  "volume": 0,
+  "volume24Hours": 0,
+  "isResolved": false,
+  "uniqueBettorCount": 1,
+  "lastUpdatedTime": 1763557923846,
+  "token": "MANA",
+  "options": [
+    { "text": "a", "votes": 1 },
+    { "text": "b", "votes": 0 },
+    { "text": "See results", "votes": 0 }
+  ],
+  "description": { "type": "doc", "content": [{ "type": "paragraph" }] },
+  "groupSlugs": ["nonpredictive"],
+  "textDescription": ""
+}
