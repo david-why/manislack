@@ -168,6 +168,63 @@ namespace Manifold {
     volume: number
   }
 
+  // bets
+
+  type Bet = {
+    id: string
+    contractId: string
+    answerId?: string
+    amount: number
+    orderAmount: number // total order, maybe unfilled
+    shares: number
+    outcome: string
+    fees: Fees
+
+    userId: string
+    isApi: boolean
+    isCancelled: boolean
+    isRedemption: boolean // what is this?
+    visibility: 'public' | 'unlisted' // i guessed
+    silent?: boolean
+    replyToCommentId?: string
+    betGroupId?: string
+
+    probBefore: number
+    probAfter: number
+    isFilled: boolean
+    fills: Fill[] // TODO
+
+    loanAmount: number
+
+    createdTime: number
+    updatedTime?: number
+
+    betId?: string
+  } & (
+    | {
+        limitProb: number
+        expiresAt?: number
+      }
+    | {}
+  )
+
+  type Fill = {
+    matchedBetId: string | null
+    amount: number
+    shares: number
+    timestamp: number
+    fees: Fees
+    isSale?: boolean
+  }
+
+  // misc types
+
+  interface Fees {
+    creatorFee: number
+    platformFee: number
+    liquidityFee: number
+  }
+
   // api types
   namespace API {
     type LiteContract = Manifold.LiteContract & {
@@ -242,17 +299,17 @@ namespace Manifold {
       uniqueBettorCountDay: number
       viewCount: number
       elasticity: number
-      collectedFees: {
-        creatorFee: number
-        liquidityFee: number
-        platformFee: number
-      }
+      collectedFees: Fees
       boosted: boolean
     }
 
     interface NewContract {
       contract: Contract
       creator: any
+    }
+
+    interface NewBet {
+      bets: Bet[]
     }
   }
 }
