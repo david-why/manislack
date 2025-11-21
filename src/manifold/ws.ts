@@ -275,10 +275,15 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   }
   private _onMessage(ev: Bun.MessageEvent<string>) {
     const payload = JSON.parse(ev.data) as ManifoldIncomingMessage
-    if (payload.type === 'ack') {
-      this.emit('ack', payload.txid)
-    } else if (payload.type === 'broadcast') {
-      this.emit('broadcast', payload)
+    try {
+      if (payload.type === 'ack') {
+        this.emit('ack', payload.txid)
+      } else if (payload.type === 'broadcast') {
+        this.emit('broadcast', payload)
+      }
+    } catch (e) {
+      console.error('Error while handling WS message', e)
+      return
     }
   }
 
