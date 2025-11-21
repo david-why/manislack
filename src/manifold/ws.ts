@@ -68,6 +68,8 @@ export type ManifoldBroadcastMessage =
 
 export type ManifoldBroadcastData = Record<ManifoldSubscribeTopic, unknown> & {
   'global/new-contract': Manifold.WS.NewContract
+  'global/new-bet': Manifold.WS.NewBet
+  'global/updated-contract': Manifold.WS.UpdatedContract
 }
 
 export type ManifoldIncomingMessage = (

@@ -39,7 +39,7 @@ export function generateProgressSection(prob: number): RichTextSection {
 }
 
 export function generateAnswerBlocks(answer: {
-  prob: number
+  probability: number
   text: string
   // contractId: string
   // id: string
@@ -58,7 +58,7 @@ export function generateAnswerBlocks(answer: {
             },
           ],
         },
-        generateProgressSection(answer.prob),
+        generateProgressSection(answer.probability),
       ],
     },
     // {
@@ -176,13 +176,13 @@ function generatePollOptionsBlocks(
   return options.flatMap((o) =>
     generateAnswerBlocks({
       text: o.text,
-      prob: sumVotes ? o.votes / sumVotes : 0,
+      probability: sumVotes ? o.votes / sumVotes : 0,
     }),
   )
 }
 
 export function generateContractBlocks(
-  contract: Manifold.WS.Contract,
+  contract: Manifold.API.Contract,
 ): KnownBlock[] {
   const closeElements = contract.closeTime
     ? [
@@ -202,7 +202,7 @@ export function generateContractBlocks(
           .concat([{ type: 'divider' }])
       : contract.outcomeType === 'BINARY'
         ? generateAnswerBlocks({
-            prob: contract.prob,
+            probability: contract.probability,
             text: 'Probability',
           }).concat([{ type: 'divider' }])
         : contract.outcomeType === 'POLL'

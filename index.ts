@@ -1,7 +1,11 @@
-import { ManifoldWebSocket } from './src/manifold/ws'
-
 import { App } from '@slack/bolt'
-import { handleNewContract } from './src/slack'
+import { Client as ManifoldClient } from './src/manifold/api'
+import { ManifoldWebSocket } from './src/manifold/ws'
+import {
+  handleNewBet,
+  handleNewContract,
+  handleUpdatedContract,
+} from './src/slack'
 
 const {
   SLACK_APP_TOKEN,
@@ -9,6 +13,7 @@ const {
   SLACK_SIGNING_SECRET,
   CHANNEL_LOGS,
   MANIFOLD_WS_URL,
+  MANIFOLD_API_URL,
 } = process.env
 
 const slack = new App({
@@ -18,6 +23,7 @@ const slack = new App({
   socketMode: true,
 })
 
+const manifold = new ManifoldClient({ url: MANIFOLD_API_URL })
 const conn = new ManifoldWebSocket({ url: MANIFOLD_WS_URL })
 
 async function generalHandler(event: string, data: any) {
@@ -50,16 +56,19 @@ async function generalHandler(event: string, data: any) {
   }
 }
 
-conn.subscribe('global/new-contract', (e) => handleNewContract(slack, e))
-conn.subscribe('global/new-bet', (e) => generalHandler('global/new-bet', e))
+conn.subscribe('global/new-contract', (e) =>
+  handleNewContract(slack, manifold, e),
+)
+conn.subscribe('global/new-bet', (e) => handleNewBet(slack, manifold, e))
+conn.subscribe('global/updated-contract', (e) =>
+  handleUpdatedContract(slack, manifold, e),
+)
+
 conn.subscribe('global/new-comment', (e) =>
   generalHandler('global/new-comment', e),
 )
 conn.subscribe('global/new-subsidy', (e) =>
   generalHandler('global/new-subsidy', e),
-)
-conn.subscribe('global/updated-contract', (e) =>
-  generalHandler('global/updated-contract', e),
 )
 
 await slack.start()
