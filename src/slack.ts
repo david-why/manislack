@@ -1,6 +1,7 @@
 import type { App } from '@slack/bolt'
+import type { KnownBlock } from '@slack/types'
 import { generateContractBlocks } from './blocks'
-import { getGloballySubscribedChannels } from './database'
+import { addChannelMarket, getGloballySubscribedChannels } from './database'
 
 const { CHANNEL_LOGS } = process.env
 
@@ -35,12 +36,33 @@ export async function handleNewContract(
   const blocks = generateContractBlocks(contract)
 
   await Promise.all(
-    channels.map(async (c) => {
-      await slack.client.chat.postMessage({
-        channel: c.id,
-        text: `New market opened: ${contract.question}`,
-        blocks,
-      })
-    }),
+    channels.map((c) =>
+      handleNewContractForChannel(slack, contract, c.id, blocks),
+    ),
   )
 }
+
+async function handleNewContractForChannel(
+  slack: App,
+  contract: Manifold.WS.Contract,
+  channel: string,
+  blocks: KnownBlock[],
+) {
+  const message = await slack.client.chat.postMessage({
+    channel: channel,
+    text: `New market opened: ${contract.question}`,
+    blocks,
+  })
+
+  if (!message.ts) {
+    console.warn('No ts provided after message posted', message)
+  } else {
+    await addChannelMarket({
+      channel_id: channel,
+      market_id: contract.id,
+      message_ts: message.ts,
+    })
+  }
+}
+
+export async function handleNewBet(slack: App, bet: Manifold.WS.NewBet) {}
