@@ -42,7 +42,7 @@ namespace Manifold {
     lastBetTime?: number
   }
 
-  type MultiBasedMixin<WithAnswers extends boolean = false> = {
+  type MultiBasedMixin = {
     shouldAnswersSumToOne: boolean // true = mcq, false = set
     addAnswersMode: 'DISABLED' | 'ONLY_CREATOR' | 'ANYONE'
   }
@@ -199,14 +199,12 @@ namespace Manifold {
     createdTime: number
     updatedTime?: number
 
+    // limit props
+    limitProb?: number
+    expiresAt?: number
+
     betId?: string
-  } & (
-    | {
-        limitProb: number
-        expiresAt?: number
-      }
-    | {}
-  )
+  }
 
   type Fill = {
     matchedBetId: string | null
@@ -215,6 +213,39 @@ namespace Manifold {
     timestamp: number
     fees: Fees
     isSale?: boolean
+  }
+
+  // user
+
+  interface User {
+    id: string
+    username: string
+    name: string
+    avatarUrl: string
+
+    isBannedFromPosting: boolean
+    isAdvancedTrader: boolean // ??
+    streakForgiveness: number
+    currentBettingStreak: number
+    lastBetTime: number
+    creatorTraders: {
+      daily: number
+      weekly: number
+      allTime: number
+      monthly: number
+    }
+
+    seenStreakModal: boolean
+    signupBonusPaid: number
+    shouldShowWelcome: boolean
+
+    balance: number
+    cashBalance: number
+    spiceBalance: number
+    totalDeposits: number
+    totalCashDeposits: number
+
+    createdTime: number
   }
 
   // misc types
@@ -255,6 +286,18 @@ namespace Manifold {
     type Answer = Manifold.Answer & {
       pool: { YES: number; NO: number }
       probability: number
+    }
+
+    type User = Manifold.User & {
+      url: string
+
+      isBot: boolean
+      isAdmin: boolean
+      isTrustworthy: boolean
+
+      hasSeenLoanModal: boolean
+      referredByUserId: string
+      referredByContractId: string
     }
   }
 
@@ -303,9 +346,15 @@ namespace Manifold {
       boosted: boolean
     }
 
+    type User = Manifold.User
+
     interface NewContract {
       contract: Contract
       creator: any
+    }
+
+    interface UpdatedContract {
+      contract: Partial<Contract> & Pick<Contract, 'id'>
     }
 
     interface NewBet {

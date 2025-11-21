@@ -1586,6 +1586,30 @@ test<Manifold.WS.NewBet>({
   ],
 })
 
+// ws new contract `creator` type
+test<Manifold.WS.User>({
+  avatarUrl:
+    'https://lh3.googleusercontent.com/a/ACg8ocLXbTfEwjcd1YDSbvO-eiNhXqVlFMc7eacqePWxUpk-wKDhiw=s96-c',
+  isBannedFromPosting: false,
+  id: 'luo9ldO8dJXsFyWITBNvSPyjEqm1',
+  lastBetTime: 1763714522753,
+  creatorTraders: { daily: 1, weekly: 14, allTime: 14, monthly: 14 },
+  seenStreakModal: true,
+  signupBonusPaid: 0,
+  isAdvancedTrader: true,
+  shouldShowWelcome: false,
+  streakForgiveness: 1,
+  currentBettingStreak: 4,
+  createdTime: 1763483000000,
+  username: 'ok',
+  name: 'ok',
+  balance: 14570.246904733907,
+  cashBalance: 0,
+  spiceBalance: 0,
+  totalDeposits: 15883.747418277166,
+  totalCashDeposits: 0,
+})
+
 // ws numeric bucket new bet
 test<Manifold.WS.NewBet>({
   bets: [
