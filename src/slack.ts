@@ -117,19 +117,17 @@ export async function handleNewBet(
   const channelMarkets = await getChannelsForMarket(contractId)
 
   await Promise.all(
-    channelMarkets
-      .filter((m) => m.message_ts)
-      .map((o) =>
-        handleNewBetForChannel(
-          slack,
-          manifold,
-          bets,
-          market,
-          user,
-          o.channel_id,
-          o.message_ts!,
-        ),
+    channelMarkets.map((o) =>
+      handleNewBetForChannel(
+        slack,
+        manifold,
+        bets,
+        market,
+        user,
+        o.channel_id,
+        o.message_ts || undefined,
       ),
+    ),
   )
 }
 
@@ -140,7 +138,7 @@ async function handleNewBetForChannel(
   market: Manifold.API.Contract,
   user: Manifold.API.User,
   channel: string,
-  ts: string,
+  ts?: string,
 ) {
   const bet = bets.find((b) => !b.isRedemption)!
 

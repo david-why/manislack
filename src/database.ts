@@ -28,3 +28,7 @@ export async function getChannelsForMarket(marketId: string) {
     ChannelMarket[]
   >`SELECT * FROM channel_markets WHERE market_id = ${marketId}`
 }
+
+export async function updateChannelMarket(obj: ChannelMarket) {
+  await sql`UPDATE channel_markets SET ${sql(obj)} WHERE id = ${obj.id}`
+}
