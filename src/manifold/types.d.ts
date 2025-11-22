@@ -299,6 +299,16 @@ namespace Manifold {
       referredByUserId: string
       referredByContractId: string
     }
+
+    // requests
+    type PlaceBetRequest = {
+      amount: number
+      contractId: string
+      outcome: 'YES' | 'NO'
+      answerId?: string
+      limitProb?: number
+      expiresMillisAfter?: number
+    }
   }
 
   // ws types

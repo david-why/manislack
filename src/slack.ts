@@ -5,6 +5,8 @@ import {
   addChannelMarket,
   getChannelsForMarket,
   getGloballySubscribedChannels,
+  type Channel,
+  type ChannelMarket,
 } from './database'
 import type { Client } from './manifold/api'
 
@@ -48,7 +50,7 @@ export async function handleNewContract(
 
   await Promise.all(
     channels.map((c) =>
-      handleNewContractForChannel(slack, contract, c.id, blocks),
+      handleNewContractForChannel(slack, contract, c, blocks),
     ),
   )
 }
@@ -56,11 +58,11 @@ export async function handleNewContract(
 async function handleNewContractForChannel(
   slack: App,
   contract: Manifold.WS.Contract,
-  channel: string,
+  channel: Channel,
   blocks: KnownBlock[],
 ) {
   const message = await slack.client.chat.postMessage({
-    channel: channel,
+    channel: channel.id,
     text: `New market opened: ${contract.question}`,
     blocks,
   })
@@ -69,9 +71,10 @@ async function handleNewContractForChannel(
     console.warn('No ts provided after message posted', message)
   } else {
     await addChannelMarket({
-      channel_id: channel,
+      channel_id: channel.id,
       market_id: contract.id,
       message_ts: message.ts,
+      subscribe_new_bets: channel.subscribe_new_bets,
     })
   }
 }
@@ -118,15 +121,7 @@ export async function handleNewBet(
 
   await Promise.all(
     channelMarkets.map((o) =>
-      handleNewBetForChannel(
-        slack,
-        manifold,
-        bets,
-        market,
-        user,
-        o.channel_id,
-        o.message_ts || undefined,
-      ),
+      handleNewBetForChannel(slack, manifold, bets, market, user, o),
     ),
   )
 }
@@ -137,9 +132,10 @@ async function handleNewBetForChannel(
   bets: Manifold.Bet[],
   market: Manifold.API.Contract,
   user: Manifold.API.User,
-  channel: string,
-  ts?: string,
+  channel: ChannelMarket,
 ) {
+  if (!channel.subscribe_new_bets) return
+
   const bet = bets.find((b) => !b.isRedemption)!
 
   let choiceMessage: string
@@ -163,8 +159,8 @@ async function handleNewBetForChannel(
   }
 
   await slack.client.chat.postMessage({
-    channel,
-    thread_ts: ts,
+    channel: channel.channel_id,
+    thread_ts: channel.message_ts || undefined,
     text: message,
   })
 }

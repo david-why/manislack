@@ -11,6 +11,7 @@ export interface ChannelMarket {
   channel_id: string
   market_id: string
   message_ts: string | null
+  subscribe_new_bets: boolean
 }
 
 export async function getGloballySubscribedChannels() {
