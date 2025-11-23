@@ -2,6 +2,9 @@ import { App } from '@slack/bolt'
 import { Client as ManifoldClient } from './src/manifold/api'
 import { ManifoldWebSocket } from './src/manifold/ws'
 import {
+  handleChannelBetOptButton,
+  handleChannelMarketOptButton,
+  handleChannelOptsCommand,
   handleCreateBetButton,
   handleNewBet,
   handleNewContract,
@@ -77,6 +80,11 @@ conn.subscribe('global/new-subsidy', (e) =>
   generalHandler('global/new-subsidy', e),
 )
 
+slack.action('delete', async ({ ack, respond }) => {
+  await ack()
+  await respond({ delete_original: true })
+})
+
 slack.action('bet', async ({ body, ack, payload, respond }) => {
   if (body.type !== 'block_actions' || payload.type !== 'feedback_buttons')
     return
@@ -100,6 +108,26 @@ slack.view('bet-modal', async ({ ack, payload }) => {
     outcome: betInfo.outcome,
     answerId: betInfo.answerId,
   })
+})
+
+slack.command(
+  /\/manislack-(?:dev-)?channel-opts/,
+  async ({ ack, payload, respond }) => {
+    await ack()
+    await handleChannelOptsCommand(slack, payload, respond)
+  },
+)
+
+slack.action('channel-market-opt', async ({ ack, payload, respond }) => {
+  if (payload.type !== 'button') return
+  await ack()
+  await respond(await handleChannelMarketOptButton(JSON.parse(payload.value!)))
+})
+
+slack.action('channel-bet-opt', async ({ ack, payload, respond }) => {
+  if (payload.type !== 'button') return
+  await ack()
+  await respond(await handleChannelBetOptButton(JSON.parse(payload.value!)))
 })
 
 await slack.start()

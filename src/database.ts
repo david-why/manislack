@@ -20,6 +20,20 @@ export async function getGloballySubscribedChannels() {
   >`SELECT * FROM channels WHERE subscribe_new_markets`
 }
 
+export async function getChannel(id: string) {
+  return (await sql<Channel[]>`SELECT * FROM channels WHERE id = ${id}`)[0]
+}
+
+export async function addChannel(
+  channel: Partial<Channel> & Pick<Channel, 'id'>,
+) {
+  return (await sql<[Channel]>`INSERT INTO channels ${sql(channel)} RETURNING *`)[0]
+}
+
+export async function updateChannel(channel: Channel) {
+  await sql`UPDATE channels SET ${sql(channel)} WHERE id = ${channel.id}`
+}
+
 export async function addChannelMarket(obj: Omit<ChannelMarket, 'id'>) {
   await sql`INSERT INTO channel_markets ${sql(obj)}`
 }

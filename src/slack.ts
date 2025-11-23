@@ -1,12 +1,15 @@
-import type { App, RespondFn } from '@slack/bolt'
+import type { App, RespondFn, SlashCommand } from '@slack/bolt'
 import type { KnownBlock } from '@slack/types'
-import { generateContractBlocks } from './blocks'
+import { generateChannelOptsBlocks, generateContractBlocks } from './blocks'
 import {
+  getChannel,
   addChannelMarket,
   getChannelsForMarket,
   getGloballySubscribedChannels,
   type Channel,
   type ChannelMarket,
+  addChannel,
+  updateChannel,
 } from './database'
 import type { Client } from './manifold/api'
 import { trimTextEllipsis } from './utils'
@@ -209,12 +212,15 @@ export async function handleCreateBetButton(
   ])
 
   if (contract.closeTime && contract.closeTime < Date.now()) {
-    return respond({ replace_original: false, text: ':x: This question is closed!' })
+    return respond({
+      replace_original: false,
+      text: ':x: This question is closed!',
+    })
   }
 
   const answer = (
     contract as Manifold.AnswersMixin<Manifold.API.Answer>
-  ).answers.find((a) => a.id === payload.answerId)
+  ).answers?.find((a) => a.id === payload.answerId)
 
   const title = payload.answerId
     ? `Bet ${payload.outcome} on ${answer?.text}`
@@ -283,5 +289,93 @@ export async function handleCreateBetButton(
         },
       ],
     },
+  })
+}
+
+export interface ChannelOptData {
+  id: string
+  value: boolean
+}
+
+export async function handleChannelMarketOptButton(data: ChannelOptData) {
+  let obj = await getChannel(data.id)
+  if (!obj) {
+    obj = await addChannel({
+      id: data.id,
+      subscribe_new_markets: data.value,
+    })
+  } else {
+    obj.subscribe_new_markets = data.value
+    await updateChannel(obj)
+  }
+  return {
+    text: 'Manage channel opts',
+    blocks: generateChannelOptsBlocks(obj),
+  }
+}
+
+export async function handleChannelBetOptButton(data: ChannelOptData) {
+  let obj = await getChannel(data.id)
+  if (!obj) {
+    obj = await addChannel({
+      id: data.id,
+      subscribe_new_bets: data.value,
+    })
+  } else {
+    obj.subscribe_new_bets = data.value
+    await updateChannel(obj)
+  }
+  return {
+    text: 'Manage channel opts',
+    blocks: generateChannelOptsBlocks(obj),
+  }
+}
+
+// slash commands
+
+export async function handleChannelOptsCommand(
+  slack: App,
+  payload: SlashCommand,
+  respond: RespondFn,
+) {
+  let channelId: string
+  if (payload.text.trim()) {
+    const match = payload.text.trim().match(/^<#(C[0-9A-Z]+)\|.*>$/)
+    if (!match) {
+      return respond(
+        'Please provide a valid channel in the command argument, or remove the argument to manage the current channel!',
+      )
+    }
+    channelId = match[1]!
+  } else {
+    channelId = payload.channel_id
+  }
+
+  let creator: string | undefined
+  try {
+    const channel = await slack.client.conversations.info({
+      channel: channelId,
+    })
+    creator = channel.channel?.creator
+  } catch (e) {
+    console.error('Failed to fetch channel, is it private?', e)
+    return respond(
+      `The channel provided does not exist or is private. Please add me to <#${channelId}> and try again!`,
+    )
+  }
+
+  if (payload.user_id !== creator) {
+    return respond('Only the channel creator can modify channel opts!')
+  }
+
+  const obj: Channel = (await getChannel(channelId)) ?? {
+    id: channelId,
+    subscribe_new_bets: false,
+    subscribe_new_markets: false,
+  }
+
+  return respond({
+    text: 'Manage channel opts',
+    blocks: generateChannelOptsBlocks(obj),
   })
 }

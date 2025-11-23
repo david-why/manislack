@@ -1,10 +1,12 @@
 import type {
+  ContextBlockElement,
   KnownBlock,
   RichTextBlockElement,
   RichTextElement,
   RichTextSection,
   RichTextText,
 } from '@slack/types'
+import type { Channel } from './database'
 
 const BLOCKS = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'] as const
 
@@ -224,6 +226,16 @@ export function generateContractBlocks(
           ? generatePollOptionsBlocks(contract.options!)
           : []
 
+  const liquidityElements: ContextBlockElement[] =
+    contract.outcomeType === 'POLL'
+      ? []
+      : [
+          {
+            type: 'mrkdwn',
+            text: `*M${contract.totalLiquidity}* liquidity`,
+          },
+        ]
+
   return [
     {
       type: 'section',
@@ -263,6 +275,7 @@ export function generateContractBlocks(
           type: 'mrkdwn',
           text: `*M${Math.floor(contract.volume)}* volume`,
         },
+        ...liquidityElements,
         {
           type: 'mrkdwn',
           text: `*${contract.uniqueBettorCount}* holders`,
@@ -274,5 +287,74 @@ export function generateContractBlocks(
     },
     ...answerBlocks,
     ...generateTiptapBlocks(contract.description),
+  ]
+}
+
+// slack & db
+
+export function generateChannelOptsBlocks(channel: Channel) {
+  return [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*Manage channel opts*\n\n<#${channel.id}> will receive...`,
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*A message for new markets*: ${channel.subscribe_new_markets ? 'Yes' : 'No'}`,
+      },
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: channel.subscribe_new_markets ? 'Turn off' : 'Turn on',
+          emoji: true,
+        },
+        value: JSON.stringify({
+          id: channel.id,
+          value: !channel.subscribe_new_markets,
+        }),
+        style: channel.subscribe_new_markets ? 'danger' : 'primary',
+        action_id: 'channel-market-opt',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*A thread reply for new bets*: ${channel.subscribe_new_bets ? 'Yes' : 'No'}\n_This only applies to new markets._`,
+      },
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: channel.subscribe_new_bets ? 'Turn off' : 'Turn on',
+        },
+        value: JSON.stringify({
+          id: channel.id,
+          value: !channel.subscribe_new_bets,
+        }),
+        style: channel.subscribe_new_bets ? 'danger' : 'primary',
+        action_id: 'channel-bet-opt',
+      },
+    },
+    {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: ':x: Close',
+            emoji: true,
+          },
+          action_id: 'delete',
+        },
+      ],
+    },
   ]
 }
