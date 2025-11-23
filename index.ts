@@ -75,13 +75,6 @@ conn.subscribe('global/updated-contract', (e) =>
   handleUpdatedContract(slack, manifold, e),
 )
 
-conn.subscribe('global/new-comment', (e) =>
-  generalHandler('global/new-comment', e),
-)
-conn.subscribe('global/new-subsidy', (e) =>
-  generalHandler('global/new-subsidy', e),
-)
-
 // slack
 
 slack.action('delete', async ({ ack, respond }) => {
