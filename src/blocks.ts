@@ -225,7 +225,9 @@ export function generateContractBlocks(
     contract.outcomeType === 'MULTI_NUMERIC' ||
     contract.outcomeType === 'DATE'
       ? contract
-          .answers!.flatMap((a) => generateAnswerBlocks(a, isClosed))
+          .answers!.toSorted((a, b) => b.probability - a.probability)
+          .slice(0, 20)
+          .flatMap((a) => generateAnswerBlocks(a, isClosed))
           .concat([{ type: 'divider' }])
       : contract.outcomeType === 'BINARY'
         ? generateAnswerBlocks(
