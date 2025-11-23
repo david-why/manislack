@@ -176,7 +176,8 @@ This bot can track new markets and bets, as well as let you bet with a shared Ha
 Available commands:
 
 - \`/manislack-info\`: What you're seeing right now!
-- \`/manislack-channel-opts\`: Opts in or out a channel from new markets and bets notifications.`
+- \`/manislack-market <url|slug|id>\`: Fetch a market into this channel.
+- \`/manislack-channel-opts [#channel]\`: Opts in or out a channel from new markets and bets notifications.`
   await respond({
     text: message,
     blocks: [
