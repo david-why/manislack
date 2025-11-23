@@ -41,9 +41,39 @@ export function generateProgressSection(prob: number): RichTextSection {
 export function generateAnswerBlocks(answer: {
   probability: number
   text: string
-  // contractId: string
-  // id: string
+  contractId?: string
+  id?: string
 }): KnownBlock[] {
+  const betBlocks: KnownBlock[] = answer.contractId
+    ? [
+        {
+          type: 'context_actions',
+          elements: [
+            {
+              type: 'feedback_buttons',
+              action_id: 'bet',
+              positive_button: {
+                text: { type: 'plain_text', text: 'Bet YES' },
+                value: JSON.stringify({
+                  outcome: 'YES',
+                  answerId: answer.id,
+                  contractId: answer.contractId,
+                }),
+              },
+              negative_button: {
+                text: { type: 'plain_text', text: 'Bet NO' },
+                value: JSON.stringify({
+                  outcome: 'NO',
+                  answerId: answer.id,
+                  contractId: answer.contractId,
+                }),
+              },
+            },
+          ],
+        },
+      ]
+    : []
+
   return [
     {
       type: 'rich_text',
@@ -61,23 +91,7 @@ export function generateAnswerBlocks(answer: {
         generateProgressSection(answer.probability),
       ],
     },
-    // {
-    //   type: 'context_actions',
-    //   elements: [
-    //     {
-    //       type: 'feedback_buttons',
-    //       action_id: 'bet',
-    //       positive_button: {
-    //         text: { type: 'plain_text', text: 'Bet YES' },
-    //         value: JSON.stringify({}),
-    //       },
-    //       negative_button: {
-    //         text: { type: 'plain_text', text: 'Bet NO' },
-    //         value: `no-${contract.id}-${a.id}`,
-    //       },
-    //     },
-    //   ],
-    // },
+    ...betBlocks,
   ]
 }
 
@@ -188,7 +202,7 @@ export function generateContractBlocks(
     ? [
         {
           type: 'mrkdwn' as const,
-          text: `:clock4: Closes <!date^${Math.round(contract.closeTime / 1000)}^{date_short_pretty}|text>`,
+          text: `Closes *<!date^${Math.round(contract.closeTime / 1000)}^{date_short_pretty}|text>*`,
         },
       ]
     : []
@@ -204,6 +218,7 @@ export function generateContractBlocks(
         ? generateAnswerBlocks({
             probability: contract.probability,
             text: 'Probability',
+            contractId: contract.id,
           }).concat([{ type: 'divider' }])
         : contract.outcomeType === 'POLL'
           ? generatePollOptionsBlocks(contract.options!)
@@ -211,8 +226,24 @@ export function generateContractBlocks(
 
   return [
     {
-      type: 'header',
-      text: { type: 'plain_text', text: contract.question },
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*${contract.question}*`,
+      },
+      accessory: {
+        type: 'overflow',
+        options: [
+          {
+            text: {
+              type: 'plain_text',
+              text: ':link: Open on Manifold',
+              emoji: true,
+            },
+            url: contract.url,
+          },
+        ],
+      },
     },
     {
       type: 'context',
@@ -228,6 +259,14 @@ export function generateContractBlocks(
           text: contract.creatorName,
         },
         ...closeElements,
+        {
+          type: 'mrkdwn',
+          text: `*M${Math.floor(contract.volume)}* volume`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*${contract.uniqueBettorCount}* holders`,
+        },
       ],
     },
     {

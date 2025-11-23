@@ -1,4 +1,4 @@
-import type { App } from '@slack/bolt'
+import type { App, RespondFn } from '@slack/bolt'
 import type { KnownBlock } from '@slack/types'
 import { generateContractBlocks } from './blocks'
 import {
@@ -9,6 +9,7 @@ import {
   type ChannelMarket,
 } from './database'
 import type { Client } from './manifold/api'
+import { trimTextEllipsis } from './utils'
 
 const { CHANNEL_LOGS } = process.env
 
@@ -185,4 +186,102 @@ export async function handleUpdatedContract(
         }),
       ),
   )
+}
+
+// events from slack
+
+export interface CreateBetData {
+  outcome: 'YES' | 'NO'
+  contractId: string
+  answerId?: string
+}
+
+export async function handleCreateBetButton(
+  slack: App,
+  manifold: Client,
+  trigger_id: string,
+  payload: CreateBetData,
+  respond: RespondFn,
+) {
+  const [contract, me] = await Promise.all([
+    manifold.fetchMarket(payload.contractId),
+    manifold.fetchMe(),
+  ])
+
+  if (contract.closeTime && contract.closeTime < Date.now()) {
+    return respond({ replace_original: false, text: ':x: This question is closed!' })
+  }
+
+  const answer = (
+    contract as Manifold.AnswersMixin<Manifold.API.Answer>
+  ).answers.find((a) => a.id === payload.answerId)
+
+  const title = payload.answerId
+    ? `Bet ${payload.outcome} on ${answer?.text}`
+    : `Place a ${payload.outcome} bet`
+
+  const balance = Math.floor(me.balance)
+
+  await slack.client.views.open({
+    trigger_id: trigger_id,
+    view: {
+      type: 'modal',
+      callback_id: 'bet-modal',
+      private_metadata: JSON.stringify(payload),
+      title: { type: 'plain_text', text: title },
+      submit: { type: 'plain_text', text: 'Place bet' },
+      close: { type: 'plain_text', text: 'Cancel' },
+      blocks: [
+        {
+          type: 'rich_text',
+          elements: [
+            {
+              type: 'rich_text_section',
+              elements: [
+                {
+                  type: 'text',
+                  text: 'You are about to place a bet on ',
+                },
+                {
+                  type: 'link',
+                  text: contract.question,
+                  url: contract.url,
+                  style: {
+                    bold: true,
+                  },
+                },
+                {
+                  type: 'text',
+                  text: '.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'input',
+          block_id: 'amount',
+          element: {
+            type: 'number_input',
+            is_decimal_allowed: false,
+            initial_value: '10',
+            min_value: '1',
+            max_value: balance.toString(),
+            action_id: 'value',
+          },
+          label: {
+            type: 'plain_text',
+            text: ':manifold-mana: Bet amount',
+            emoji: true,
+          },
+          hint: {
+            type: 'plain_text',
+            text: `You have :manifold-mana:${balance}.`,
+            emoji: true,
+          },
+          optional: false,
+        },
+      ],
+    },
+  })
 }

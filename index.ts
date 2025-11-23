@@ -2,9 +2,11 @@ import { App } from '@slack/bolt'
 import { Client as ManifoldClient } from './src/manifold/api'
 import { ManifoldWebSocket } from './src/manifold/ws'
 import {
+  handleCreateBetButton,
   handleNewBet,
   handleNewContract,
   handleUpdatedContract,
+  type CreateBetData,
 } from './src/slack'
 
 const {
@@ -14,6 +16,7 @@ const {
   CHANNEL_LOGS,
   MANIFOLD_WS_URL,
   MANIFOLD_API_URL,
+  MANIFOLD_API_KEY,
 } = process.env
 
 const slack = new App({
@@ -23,7 +26,10 @@ const slack = new App({
   socketMode: true,
 })
 
-const manifold = new ManifoldClient({ url: MANIFOLD_API_URL })
+const manifold = new ManifoldClient({
+  url: MANIFOLD_API_URL,
+  token: MANIFOLD_API_KEY,
+})
 const conn = new ManifoldWebSocket({ url: MANIFOLD_WS_URL })
 
 async function generalHandler(event: string, data: any) {
@@ -70,5 +76,30 @@ conn.subscribe('global/new-comment', (e) =>
 conn.subscribe('global/new-subsidy', (e) =>
   generalHandler('global/new-subsidy', e),
 )
+
+slack.action('bet', async ({ body, ack, payload, respond }) => {
+  if (body.type !== 'block_actions' || payload.type !== 'feedback_buttons')
+    return
+  await ack()
+  await handleCreateBetButton(
+    slack,
+    manifold,
+    body.trigger_id,
+    JSON.parse(payload.value),
+    respond,
+  )
+})
+
+slack.view('bet-modal', async ({ ack, payload }) => {
+  await ack()
+  const betInfo = JSON.parse(payload.private_metadata) as CreateBetData
+  const amount = parseInt(payload.state.values.amount!.value!.value!)
+  await manifold.placeBet({
+    amount,
+    contractId: betInfo.contractId,
+    outcome: betInfo.outcome,
+    answerId: betInfo.answerId,
+  })
+})
 
 await slack.start()

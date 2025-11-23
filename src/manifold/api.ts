@@ -54,6 +54,10 @@ export class Client {
     return this._request<Manifold.API.User>(`/v0/user/by-id/${id}`)
   }
 
+  async fetchMe() {
+    return this._request<Manifold.API.User>('/v0/me', { auth: true })
+  }
+
   async placeBet(bet: Manifold.API.PlaceBetRequest) {
     return this._request(`/v0/bet`, { method: 'POST', body: bet, auth: true })
   }
