@@ -27,7 +27,9 @@ export async function getChannel(id: string) {
 export async function addChannel(
   channel: Partial<Channel> & Pick<Channel, 'id'>,
 ) {
-  return (await sql<[Channel]>`INSERT INTO channels ${sql(channel)} RETURNING *`)[0]
+  return (
+    await sql<[Channel]>`INSERT INTO channels ${sql(channel)} RETURNING *`
+  )[0]
 }
 
 export async function updateChannel(channel: Channel) {
@@ -38,6 +40,14 @@ export async function addChannelMarket(obj: Omit<ChannelMarket, 'id'>) {
   await sql`INSERT INTO channel_markets ${sql(obj)}`
 }
 
+export async function getChannelMarket(channelId: string, marketId: string) {
+  return (
+    await sql<
+      ChannelMarket[]
+    >`SELECT * FROM channel_markets WHERE channel_id = ${channelId} AND market_id = ${marketId}`
+  )[0]
+}
+
 export async function getChannelsForMarket(marketId: string) {
   return await sql<
     ChannelMarket[]
@@ -45,5 +55,6 @@ export async function getChannelsForMarket(marketId: string) {
 }
 
 export async function updateChannelMarket(obj: ChannelMarket) {
-  await sql`UPDATE channel_markets SET ${sql(obj)} WHERE id = ${obj.id}`
+  const data = { ...obj, id: undefined }
+  await sql`UPDATE channel_markets SET ${sql(data)} WHERE id = ${obj.id}`
 }

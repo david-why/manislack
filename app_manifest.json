@@ -20,6 +20,12 @@
         "command": "/manislack-info",
         "description": "Learn how to use Manislack",
         "should_escape": false
+      },
+      {
+        "command": "/manislack-market",
+        "description": "Fetch a single market into this channel",
+        "usage_hint": "<url|slug|id>",
+        "should_escape": false
       }
     ],
     "unfurl_domains": ["manifold.markets"]

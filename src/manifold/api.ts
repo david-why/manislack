@@ -50,6 +50,10 @@ export class Client {
     return this._request<Manifold.API.Contract>(`/v0/market/${id}`)
   }
 
+  async fetchMarketBySlug(slug: string) {
+    return this._request<Manifold.API.Contract>(`/v0/slug/${slug}`)
+  }
+
   async fetchUser(id: string) {
     return this._request<Manifold.API.User>(`/v0/user/by-id/${id}`)
   }

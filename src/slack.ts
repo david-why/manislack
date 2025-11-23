@@ -10,6 +10,8 @@ import {
   type ChannelMarket,
   addChannel,
   updateChannel,
+  getChannelMarket,
+  updateChannelMarket,
 } from './database'
 import type { Client } from './manifold/api'
 import { trimTextEllipsis } from './utils'
@@ -22,35 +24,36 @@ export async function handleNewContract(
   { contract, creator }: Manifold.WS.NewContract,
 ) {
   if (CHANNEL_LOGS) {
-    slack.client.chat.postMessage({
-      channel: CHANNEL_LOGS,
-      text: 'New market opened',
-      blocks: [
-        {
-          type: 'header',
-          text: { type: 'plain_text', text: 'New market opened' },
-        },
-        {
-          type: 'rich_text',
-          elements: [
-            {
-              type: 'rich_text_preformatted',
-              elements: [{ type: 'text', text: JSON.stringify(contract) }],
-            },
-            {
-              type: 'rich_text_preformatted',
-              elements: [{ type: 'text', text: JSON.stringify(creator) }],
-            },
-          ],
-        },
-      ],
-    })
+    // slack.client.chat.postMessage({
+    //   channel: CHANNEL_LOGS,
+    //   text: 'New market opened',
+    //   blocks: [
+    //     {
+    //       type: 'header',
+    //       text: { type: 'plain_text', text: 'New market opened' },
+    //     },
+    //     {
+    //       type: 'rich_text',
+    //       elements: [
+    //         {
+    //           type: 'rich_text_preformatted',
+    //           elements: [{ type: 'text', text: JSON.stringify(contract) }],
+    //         },
+    //         {
+    //           type: 'rich_text_preformatted',
+    //           elements: [{ type: 'text', text: JSON.stringify(creator) }],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // })
   }
 
   const channels = await getGloballySubscribedChannels()
 
   const fullContract = await manifold.fetchMarket(contract.id)
   const blocks = generateContractBlocks(fullContract)
+  console.log(JSON.stringify(blocks))
 
   await Promise.all(
     channels.map((c) =>
@@ -61,7 +64,7 @@ export async function handleNewContract(
 
 async function handleNewContractForChannel(
   slack: App,
-  contract: Manifold.WS.Contract,
+  contract: Manifold.Contract,
   channel: Channel,
   blocks: KnownBlock[],
 ) {
@@ -234,7 +237,7 @@ export async function handleCreateBetButton(
       type: 'modal',
       callback_id: 'bet-modal',
       private_metadata: JSON.stringify(payload),
-      title: { type: 'plain_text', text: title },
+      title: { type: 'plain_text', text: trimTextEllipsis(title, 24) },
       submit: { type: 'plain_text', text: 'Place bet' },
       close: { type: 'plain_text', text: 'Cancel' },
       blocks: [
@@ -378,4 +381,67 @@ export async function handleChannelOptsCommand(
     text: 'Manage channel opts',
     blocks: generateChannelOptsBlocks(obj),
   })
+}
+
+export async function handleMarketCommand(
+  slack: App,
+  manifold: Client,
+  payload: SlashCommand,
+  respond: RespondFn,
+) {
+  const text = payload.text.trim()
+  console.log(text)
+
+  let contract: Manifold.API.Contract
+  if (text.startsWith('http')) {
+    const url = new URL(text)
+    const match = url.pathname.match(/^\/[^/]+\/([^/]+)\/?$/)
+    if (!match) {
+      return respond('Please check your URL and try again!')
+    }
+    const slug = match[1]!
+    contract = await manifold.fetchMarketBySlug(slug)
+  } else {
+    try {
+      contract = await manifold.fetchMarketBySlug(text)
+    } catch {
+      try {
+        contract = await manifold.fetchMarket(text)
+      } catch {
+        return respond(
+          'Your input does not look like a URL, slug, or ID. Please check and try again!',
+        )
+      }
+    }
+  }
+
+  const blocks = generateContractBlocks(contract)
+  console.log(JSON.stringify(blocks))
+  const channel = (await getChannel(payload.channel_id)) || {
+    id: payload.channel_id,
+    subscribe_new_bets: false,
+  }
+
+  const { ts } = await slack.client.chat.postMessage({
+    channel: payload.channel_id,
+    text: `Market: ${contract.question}`,
+    blocks,
+  })
+  if (!ts) return
+
+  const cm = await getChannelMarket(payload.channel_id, contract.id)
+  if (!cm) {
+    if (!(await getChannel(payload.channel_id))) {
+      await addChannel({ id: payload.channel_id })
+    }
+    await addChannelMarket({
+      channel_id: payload.channel_id,
+      market_id: contract.id,
+      message_ts: ts,
+      subscribe_new_bets: channel.subscribe_new_bets,
+    })
+  } else {
+    cm.message_ts = ts
+    await updateChannelMarket(cm)
+  }
 }

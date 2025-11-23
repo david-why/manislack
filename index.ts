@@ -6,6 +6,7 @@ import {
   handleChannelMarketOptButton,
   handleChannelOptsCommand,
   handleCreateBetButton,
+  handleMarketCommand,
   handleNewBet,
   handleNewContract,
   handleUpdatedContract,
@@ -184,5 +185,15 @@ Available commands:
     ],
   })
 })
+
+// /manislack-market <url|slug|id>
+
+slack.command(
+  /\/manislack-(?:dev-)?market/,
+  async ({ ack, payload, respond }) => {
+    await ack()
+    await handleMarketCommand(slack, manifold, payload, respond)
+  },
+)
 
 await slack.start()
