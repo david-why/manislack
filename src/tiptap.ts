@@ -60,12 +60,6 @@ function generateTiptapBlockElements(content: any): RichTextBlockElement[] {
       {
         type: 'rich_text_list',
         style: 'bullet',
-        // elements: [
-        //   {
-        //     type: 'rich_text_section',
-        //     elements: content.content.flatMap(generateTiptapElements),
-        //   },
-        // ],
         elements: content.content.map(
           (listItem: any) =>
             ({
@@ -76,6 +70,29 @@ function generateTiptapBlockElements(content: any): RichTextBlockElement[] {
       },
     ]
     return blocks.filter(({ elements: [section] }) => section!.elements.length)
+  } else if (content.type === 'orderedList') {
+    if (!content.content) return []
+    const blocks: RichTextList[] = [
+      {
+        type: 'rich_text_list',
+        style: 'ordered',
+        elements: content.content.map(
+          (listItem: any) =>
+            ({
+              type: 'rich_text_section',
+              elements: listItem.content.flatMap(generateTiptapElements),
+            }) satisfies RichTextSection,
+        ),
+      },
+    ]
+    return blocks.filter(({ elements: [section] }) => section!.elements.length)
+  } else if (content.type === 'horizontalRule') {
+    return [
+      {
+        type: 'rich_text_section',
+        elements: [{ type: 'text', text: '--------------------' }],
+      },
+    ]
   }
   return [
     {
@@ -130,8 +147,6 @@ function generateTiptapElements(content: any): RichTextElement[] {
     ]
   } else if (content.type === 'hardBreak') {
     return [{ type: 'text', text: '\n' }]
-    // } else if (content.type === 'listItem') {
-    //   return content.content.flatMap(generateTiptapElements)
   } else if (content.type === 'paragraph') {
     const elements: RichTextElement[] = content.content.flatMap(
       generateTiptapElements,
@@ -140,6 +155,11 @@ function generateTiptapElements(content: any): RichTextElement[] {
   } else if (content.type === 'bulletList') {
     return content.content.flatMap((listItem: any) => [
       { type: 'text', text: '- ' },
+      ...listItem.content.flatMap(generateTiptapElements),
+    ])
+  } else if (content.type === 'orderedList') {
+    return content.content.flatMap((listItem: any, index: number) => [
+      { type: 'text', text: `${index + 1}. ` },
       ...listItem.content.flatMap(generateTiptapElements),
     ])
   }
