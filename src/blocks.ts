@@ -1,12 +1,10 @@
 import type {
   ContextBlockElement,
   KnownBlock,
-  RichTextBlockElement,
-  RichTextElement,
   RichTextSection,
-  RichTextText,
 } from '@slack/types'
 import type { Channel } from './database'
+import { generateTiptapBlocks } from './tiptap'
 
 const BLOCKS = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'] as const
 
@@ -104,93 +102,6 @@ export function generateAnswerBlocks(
     },
     ...betBlocks,
   ]
-}
-
-export function generateTiptapBlocks(content: any): KnownBlock[] {
-  if (typeof content === 'string') {
-    return [{ type: 'section', text: { type: 'plain_text', text: content } }]
-  }
-  if (!content.content) {
-    return []
-  }
-  const blocks = [
-    {
-      type: 'rich_text',
-      elements: content.content.flatMap(generateTiptapBlockElements),
-    },
-  ] satisfies KnownBlock[]
-  return blocks
-}
-
-function generateTiptapBlockElements(content: any): RichTextBlockElement[] {
-  if (!content.content) {
-    return []
-  }
-  if (content.type === 'heading') {
-    const elements = generateTiptapElements(content.content)
-    if (!elements.length) {
-      return []
-    }
-    return [
-      {
-        type: 'rich_text_section',
-        elements: elements.map((e) => ({
-          ...e,
-          style: Object.assign(e.style ?? {}, { bold: true }),
-        })),
-      },
-    ]
-  } else if (content.type === 'paragraph') {
-    const blocks: RichTextBlockElement[] = [
-      {
-        type: 'rich_text_section',
-        elements: content.content.flatMap(generateTiptapElements),
-      },
-    ]
-    return blocks.filter(({ elements }) => elements.length)
-  }
-  return [
-    {
-      type: 'rich_text_section',
-      elements: [{ type: 'text', text: `[Unknown block "${content.type}"]` }],
-    },
-  ]
-}
-
-function generateTiptapElements(content: any): RichTextElement[] {
-  if (content.type === 'text') {
-    const text = content.text
-    if (!text) {
-      return []
-    }
-    const marks = content.marks ?? []
-    const style: RichTextText['style'] & {} = {}
-    let link: string | undefined = undefined
-    let spoiler = false
-    for (const mark of marks) {
-      if (mark.type === 'bold') {
-        style.bold = true
-      }
-      if (mark.type === 'italic') {
-        style.italic = true
-      }
-      if (mark.type === 'spoiler') {
-        spoiler = true
-      }
-      if (mark.type === 'link') {
-        link = mark.attrs.href
-      }
-    }
-    if (spoiler) {
-      style.code = true
-      return [{ type: 'text', text: '[spoiler]', style }]
-    }
-    if (link) {
-      return [{ type: 'link', text, url: link, style }]
-    }
-    return [{ type: 'text', text, style }]
-  }
-  return [{ type: 'text', text: ` [Unknown block "${content.type}"] ` }]
 }
 
 function generatePollOptionsBlocks(

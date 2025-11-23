@@ -21,43 +21,17 @@ const { CHANNEL_LOGS } = process.env
 export async function handleNewContract(
   slack: App,
   manifold: Client,
-  { contract, creator }: Manifold.WS.NewContract,
+  { contract }: { contract: { id: string } },
 ) {
-  if (CHANNEL_LOGS) {
-    // slack.client.chat.postMessage({
-    //   channel: CHANNEL_LOGS,
-    //   text: 'New market opened',
-    //   blocks: [
-    //     {
-    //       type: 'header',
-    //       text: { type: 'plain_text', text: 'New market opened' },
-    //     },
-    //     {
-    //       type: 'rich_text',
-    //       elements: [
-    //         {
-    //           type: 'rich_text_preformatted',
-    //           elements: [{ type: 'text', text: JSON.stringify(contract) }],
-    //         },
-    //         {
-    //           type: 'rich_text_preformatted',
-    //           elements: [{ type: 'text', text: JSON.stringify(creator) }],
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // })
-  }
-
   const channels = await getGloballySubscribedChannels()
 
   const fullContract = await manifold.fetchMarket(contract.id)
   const blocks = generateContractBlocks(fullContract)
   console.log(JSON.stringify(blocks))
 
-  await Promise.all(
+  await Promise.allSettled(
     channels.map((c) =>
-      handleNewContractForChannel(slack, contract, c, blocks),
+      handleNewContractForChannel(slack, fullContract, c, blocks),
     ),
   )
 }

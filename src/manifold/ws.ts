@@ -98,6 +98,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
   private pingInterval?: ReturnType<typeof setInterval>
   private reconnectTimeout?: ReturnType<typeof setTimeout>
   private connectTimeout?: ReturnType<typeof setTimeout>
+  private connId = 0 // incremented every time on open
   private txid = 0
   private topicEmitter = new EventEmitter<{
     [T in ManifoldSubscribeTopic]: [data: ManifoldBroadcastData[T]]
@@ -216,7 +217,9 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
         }
       }
 
+      const connId = this.connId
       const timeout = setTimeout(() => {
+        if (connId !== this.connId) return
         console.warn(
           `Server did not ack message ${txid} in ${PING_TIMEOUT}ms, reconnecting`,
         )
@@ -255,6 +258,7 @@ export class ManifoldWebSocket extends EventEmitter<ManifoldWebSocketEventMap> {
     this._reconnect()
   }
   private _onOpen(ev: Event) {
+    this.connId++
     const ws = ev.target as WebSocket
     if (ws != this.ws) return
     console.log('WebSocket connected')
