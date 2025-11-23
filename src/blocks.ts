@@ -49,27 +49,32 @@ export function generateAnswerBlocks(answer: {
   const betBlocks: KnownBlock[] = answer.contractId
     ? [
         {
-          type: 'context_actions',
+          type: 'actions',
           elements: [
             {
-              type: 'feedback_buttons',
-              action_id: 'bet',
-              positive_button: {
-                text: { type: 'plain_text', text: 'Bet YES' },
-                value: JSON.stringify({
-                  outcome: 'YES',
-                  answerId: answer.id,
-                  contractId: answer.contractId,
-                }),
+              type: 'button',
+              text: { type: 'plain_text', text: 'YES', emoji: true },
+              value: JSON.stringify({
+                outcome: 'YES',
+                answerId: answer.id,
+                contractId: answer.contractId,
+              }),
+              style: 'primary',
+              action_id: 'bet-yes',
+            },
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'NO',
               },
-              negative_button: {
-                text: { type: 'plain_text', text: 'Bet NO' },
-                value: JSON.stringify({
-                  outcome: 'NO',
-                  answerId: answer.id,
-                  contractId: answer.contractId,
-                }),
-              },
+              value: JSON.stringify({
+                outcome: 'NO',
+                answerId: answer.id,
+                contractId: answer.contractId,
+              }),
+              style: 'danger',
+              action_id: 'bet-no',
             },
           ],
         },

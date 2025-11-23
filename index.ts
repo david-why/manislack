@@ -86,15 +86,19 @@ slack.action('delete', async ({ ack, respond }) => {
   await respond({ delete_original: true })
 })
 
-slack.action('bet', async ({ body, ack, payload, respond }) => {
-  if (body.type !== 'block_actions' || payload.type !== 'feedback_buttons')
+slack.action(/^bet.*/, async ({ body, ack, payload, respond }) => {
+  console.log(payload)
+  if (
+    body.type !== 'block_actions' ||
+    (payload.type !== 'feedback_buttons' && payload.type !== 'button')
+  )
     return
   await ack()
   await handleCreateBetButton(
     slack,
     manifold,
     body.trigger_id,
-    JSON.parse(payload.value),
+    JSON.parse(payload.value!),
     respond,
   )
 })
