@@ -11,6 +11,7 @@ import {
   handleUpdatedContract,
   type CreateBetData,
 } from './src/slack'
+import { closeButtonBlock } from './src/blocks'
 
 const {
   SLACK_APP_TOKEN,
@@ -110,6 +111,8 @@ slack.view('bet-modal', async ({ ack, payload }) => {
   })
 })
 
+// /manislack-channel-opts [#channel]
+
 slack.command(
   /\/manislack-(?:dev-)?channel-opts/,
   async ({ ack, payload, respond }) => {
@@ -128,6 +131,29 @@ slack.action('channel-bet-opt', async ({ ack, payload, respond }) => {
   if (payload.type !== 'button') return
   await ack()
   await respond(await handleChannelBetOptButton(JSON.parse(payload.value!)))
+})
+
+// /manislack-info
+
+slack.command(/\/manislack-(?:dev-)?info/, async ({ ack, respond }) => {
+  await ack()
+  const user = await manifold.fetchMe()
+  const message = `\
+Welcome to Manislack, <https://manifold.markets|:manifold-markets: Manifold Markets> on :slack: Slack!
+
+This bot can track new markets and bets, as well as let you bet with a shared Hack Club Manifold account (<${user.url}|@${user.username}>).
+
+Available commands:
+
+- \`/manislack-info\`: What you're seeing right now!
+- \`/manislack-channel-opts\`: Opts in or out a channel from new markets and bets notifications.`
+  await respond({
+    text: message,
+    blocks: [
+      { type: 'section', text: { type: 'mrkdwn', text: message } },
+      closeButtonBlock,
+    ],
+  })
 })
 
 await slack.start()

@@ -292,6 +292,21 @@ export function generateContractBlocks(
 
 // slack & db
 
+export const closeButtonBlock = {
+  type: 'actions',
+  elements: [
+    {
+      type: 'button',
+      text: {
+        type: 'plain_text',
+        text: ':x: Close',
+        emoji: true,
+      },
+      action_id: 'delete',
+    },
+  ],
+} as const
+
 export function generateChannelOptsBlocks(channel: Channel) {
   return [
     {
@@ -342,19 +357,6 @@ export function generateChannelOptsBlocks(channel: Channel) {
         action_id: 'channel-bet-opt',
       },
     },
-    {
-      type: 'actions',
-      elements: [
-        {
-          type: 'button',
-          text: {
-            type: 'plain_text',
-            text: ':x: Close',
-            emoji: true,
-          },
-          action_id: 'delete',
-        },
-      ],
-    },
+    closeButtonBlock,
   ]
 }
