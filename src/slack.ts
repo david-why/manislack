@@ -351,12 +351,12 @@ export async function handleChannelOptsCommand(
     channelId = payload.channel_id
   }
 
-  let creator: string | undefined
+  let hasPerms: boolean
   try {
-    const channel = await slack.client.conversations.info({
+    const { channel } = await slack.client.conversations.info({
       channel: channelId,
     })
-    creator = channel.channel?.creator
+    hasPerms = channel?.creator === payload.user_id || !!channel?.is_im
   } catch (e) {
     console.error('Failed to fetch channel, is it private?', e)
     return respond(
@@ -364,7 +364,7 @@ export async function handleChannelOptsCommand(
     )
   }
 
-  if (payload.user_id !== creator) {
+  if (!hasPerms) {
     return respond('Only the channel creator can modify channel opts!')
   }
 
