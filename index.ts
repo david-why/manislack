@@ -81,6 +81,8 @@ conn.subscribe('global/new-subsidy', (e) =>
   generalHandler('global/new-subsidy', e),
 )
 
+// slack
+
 slack.action('delete', async ({ ack, respond }) => {
   await ack()
   await respond({ delete_original: true })
@@ -103,16 +105,39 @@ slack.action(/^bet.*/, async ({ body, ack, payload, respond }) => {
   )
 })
 
-slack.view('bet-modal', async ({ ack, payload }) => {
+slack.view('bet-modal', async ({ ack, payload, body }) => {
+  if (body.type !== 'view_submission') return
   await ack()
   const betInfo = JSON.parse(payload.private_metadata) as CreateBetData
   const amount = parseInt(payload.state.values.amount!.value!.value!)
-  await manifold.placeBet({
-    amount,
-    contractId: betInfo.contractId,
-    outcome: betInfo.outcome,
-    answerId: betInfo.answerId,
-  })
+  try {
+    await manifold.placeBet({
+      amount,
+      contractId: betInfo.contractId,
+      outcome: betInfo.outcome,
+      answerId: betInfo.answerId,
+    })
+  } catch (e: any) {
+    console.error(`Error placing bet:`, e)
+    if (CHANNEL_LOGS) {
+      const data = { betInfo, amount }
+      slack.client.chat.postMessage({
+        channel: CHANNEL_LOGS,
+        text: `There was an error placing a bet:\n\`\`\`\n${JSON.stringify(data)}\n${String(e)}\n${e.data}\n\`\`\``,
+      })
+    }
+    if (e.data) {
+      await slack.client.chat.postMessage({
+        channel: body.user.id,
+        text: `An error occurred placing your bet:\n\`\`\`\n${e.data}\n\`\`\``,
+      })
+    } else {
+      await slack.client.chat.postMessage({
+        channel: body.user.id,
+        text: `An error occurred placing your bet. Please try again later.`,
+      })
+    }
+  }
 })
 
 // /manislack-channel-opts [#channel]

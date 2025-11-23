@@ -40,46 +40,50 @@ export function generateProgressSection(prob: number): RichTextSection {
   }
 }
 
-export function generateAnswerBlocks(answer: {
-  probability: number
-  text: string
-  contractId?: string
-  id?: string
-}): KnownBlock[] {
-  const betBlocks: KnownBlock[] = answer.contractId
-    ? [
-        {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: { type: 'plain_text', text: 'YES', emoji: true },
-              value: JSON.stringify({
-                outcome: 'YES',
-                answerId: answer.id,
-                contractId: answer.contractId,
-              }),
-              style: 'primary',
-              action_id: 'bet-yes',
-            },
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'NO',
+export function generateAnswerBlocks(
+  answer: {
+    probability: number
+    text: string
+    contractId?: string
+    id?: string
+  },
+  closed: boolean = false,
+): KnownBlock[] {
+  const betBlocks: KnownBlock[] =
+    answer.contractId && !closed
+      ? [
+          {
+            type: 'actions',
+            elements: [
+              {
+                type: 'button',
+                text: { type: 'plain_text', text: 'YES', emoji: true },
+                value: JSON.stringify({
+                  outcome: 'YES',
+                  answerId: answer.id,
+                  contractId: answer.contractId,
+                }),
+                style: 'primary',
+                action_id: 'bet-yes',
               },
-              value: JSON.stringify({
-                outcome: 'NO',
-                answerId: answer.id,
-                contractId: answer.contractId,
-              }),
-              style: 'danger',
-              action_id: 'bet-no',
-            },
-          ],
-        },
-      ]
-    : []
+              {
+                type: 'button',
+                text: {
+                  type: 'plain_text',
+                  text: 'NO',
+                },
+                value: JSON.stringify({
+                  outcome: 'NO',
+                  answerId: answer.id,
+                  contractId: answer.contractId,
+                }),
+                style: 'danger',
+                action_id: 'bet-no',
+              },
+            ],
+          },
+        ]
+      : []
 
   return [
     {
@@ -205,6 +209,8 @@ function generatePollOptionsBlocks(
 export function generateContractBlocks(
   contract: Manifold.API.Contract,
 ): KnownBlock[] {
+  const isClosed = !!(contract.closeTime && contract.closeTime < Date.now())
+
   const closeElements = contract.closeTime
     ? [
         {
@@ -219,14 +225,17 @@ export function generateContractBlocks(
     contract.outcomeType === 'MULTI_NUMERIC' ||
     contract.outcomeType === 'DATE'
       ? contract
-          .answers!.flatMap(generateAnswerBlocks)
+          .answers!.flatMap((a) => generateAnswerBlocks(a, isClosed))
           .concat([{ type: 'divider' }])
       : contract.outcomeType === 'BINARY'
-        ? generateAnswerBlocks({
-            probability: contract.probability,
-            text: 'Probability',
-            contractId: contract.id,
-          }).concat([{ type: 'divider' }])
+        ? generateAnswerBlocks(
+            {
+              probability: contract.probability,
+              text: 'Probability',
+              contractId: contract.id,
+            },
+            isClosed,
+          ).concat([{ type: 'divider' }])
         : contract.outcomeType === 'POLL'
           ? generatePollOptionsBlocks(contract.options!)
           : []
