@@ -93,6 +93,19 @@ function generateTiptapBlockElements(content: any): RichTextBlockElement[] {
         elements: [{ type: 'text', text: '--------------------' }],
       },
     ]
+  } else if (content.type === 'iframe') {
+    return [
+      {
+        type: 'rich_text_section',
+        elements: [
+          {
+            type: 'link',
+            text: `Embedded iframe: ${content.attrs.src}`,
+            url: content.attrs.src,
+          },
+        ],
+      },
+    ]
   }
   return [
     {
@@ -162,6 +175,14 @@ function generateTiptapElements(content: any): RichTextElement[] {
       { type: 'text', text: `${index + 1}. ` },
       ...listItem.content.flatMap(generateTiptapElements),
     ])
+  } else if (content.type === 'mention') {
+    return [
+      {
+        type: 'link',
+        text: `@${content.attrs.label}`,
+        url: `https://manifold.markets/${content.attrs.label}`,
+      },
+    ]
   }
   return [{ type: 'text', text: ` [Unknown element "${content.type}"] ` }]
 }
